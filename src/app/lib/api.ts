@@ -65,6 +65,12 @@ export interface AuthResponse {
   };
 }
 
+export interface CreatePostData {
+  title: string;
+  content: string;
+  topic_id: number;
+}
+
 // Helper function to create excerpt from content
 export function createExcerpt(content: string, wordLimit: number = 40): string {
   const words = content.split(/\s+/);
@@ -166,6 +172,35 @@ export async function login(data: LoginData): Promise<AuthResponse> {
   if (!response.ok) {
     const error = await response.json().catch(() => ({ detail: 'Login failed' }));
     throw new Error(error.detail || 'Login failed');
+  }
+
+  return response.json();
+}
+
+// Post creation function
+export async function createPost(data: CreatePostData): Promise<Post> {
+  // Get JWT token from localStorage
+  const token = typeof window !== 'undefined' ? localStorage.getItem('learnloop_token') : null;
+  
+  if (!token) {
+    throw new Error('Authentication required. Please login first.');
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/api/posts`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ detail: 'Failed to create post' }));
+    throw new Error(error.detail || 'Failed to create post');
   }
 
   return response.json();
