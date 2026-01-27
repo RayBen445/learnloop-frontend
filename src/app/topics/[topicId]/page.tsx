@@ -3,6 +3,9 @@ import { getTopicFeed } from '../../lib/api';
 import PostCard from '../../components/PostCard';
 import Pagination from '../../components/Pagination';
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
 interface TopicPageProps {
   params: Promise<{ topicId: string }>;
   searchParams: Promise<{ page?: string }>;

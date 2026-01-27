@@ -1,6 +1,9 @@
 import Link from 'next/link';
 import { getPost } from '../../lib/api';
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
 interface PostPageProps {
   params: Promise<{ postId: string }>;
 }
