@@ -12,14 +12,13 @@ interface HomePageProps {
 // Loading component
 function FeedSkeleton() {
   return (
-    <div className="space-y-4">
+    <div className="space-y-8">
       {[1, 2, 3].map((i) => (
-        <div key={i} className="bg-white border border-gray-200 rounded-lg p-6 animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-3/4 mb-3"></div>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="h-4 bg-gray-200 rounded w-24"></div>
-            <div className="h-4 bg-gray-200 rounded w-16"></div>
-            <div className="h-4 bg-gray-200 rounded w-12"></div>
+        <div key={i} className="border-b border-gray-200 pb-8">
+          <div className="h-5 bg-gray-200 rounded w-3/4 mb-3"></div>
+          <div className="flex items-center gap-2 mb-3">
+            <div className="h-3 bg-gray-200 rounded w-20"></div>
+            <div className="h-3 bg-gray-200 rounded w-16"></div>
           </div>
           <div className="space-y-2">
             <div className="h-4 bg-gray-200 rounded w-full"></div>
@@ -45,50 +44,57 @@ export default async function Home({ searchParams }: HomePageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-3xl mx-auto px-4 py-8">
+    <div className="min-h-screen bg-white">
+      <div className="max-w-2xl mx-auto px-6 py-12">
         {/* Header */}
-        <header className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">LearnLoop</h1>
-          <p className="text-lg text-gray-600">A learning-based community for students</p>
+        <header className="mb-12">
+          <h1 className="text-2xl font-semibold text-gray-900 mb-1">LearnLoop</h1>
+          <p className="text-sm text-gray-600">Learn, share, and grow together</p>
         </header>
 
         {/* Error State */}
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-            <h2 className="text-lg font-semibold text-red-900 mb-2">Unable to load feed</h2>
-            <p className="text-red-700">{error}</p>
+          <div className="border-l-4 border-red-500 pl-4 py-3 mb-8">
+            <p className="text-sm font-medium text-red-900 mb-1">Unable to load feed</p>
+            <p className="text-sm text-red-700">{error}</p>
           </div>
         )}
 
-        {/* Empty State */}
-        {!error && feed && feed.posts.length === 0 && (
-          <div className="bg-white border border-gray-200 rounded-lg p-12 text-center">
-            <svg className="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            <h3 className="text-lg font-medium text-gray-900 mb-1">No posts yet</h3>
-            <p className="text-gray-600">Be the first to share something with the community!</p>
+        {/* Latest Posts Section */}
+        <section>
+          <div className="mb-6">
+            <h2 className="text-base font-semibold text-gray-900">Latest Posts</h2>
+            <div className="mt-2 border-t border-gray-200"></div>
           </div>
-        )}
 
-        {/* Feed */}
-        {!error && feed && feed.posts.length > 0 && (
-          <>
-            <div className="space-y-4">
-              {feed.posts.map((post) => (
-                <PostCard key={post.id} post={post} />
-              ))}
+          {/* Empty State */}
+          {!error && feed && feed.posts.length === 0 && (
+            <div className="py-12">
+              <p className="text-sm text-gray-600 text-center mb-4">
+                No posts have been shared yet.
+              </p>
+              <div className="border-t border-gray-200"></div>
             </div>
+          )}
 
-            {/* Pagination */}
-            <Pagination 
-              currentPage={feed.page} 
-              totalPages={feed.total_pages}
-              basePath="/"
-            />
-          </>
-        )}
+          {/* Feed */}
+          {!error && feed && feed.posts.length > 0 && (
+            <>
+              <div className="space-y-8">
+                {feed.posts.map((post) => (
+                  <PostCard key={post.id} post={post} />
+                ))}
+              </div>
+
+              {/* Pagination */}
+              <Pagination 
+                currentPage={feed.page} 
+                totalPages={feed.total_pages}
+                basePath="/"
+              />
+            </>
+          )}
+        </section>
       </div>
     </div>
   );
