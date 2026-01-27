@@ -71,6 +71,11 @@ export interface CreatePostData {
   topic_id: number;
 }
 
+export interface CreateCommentData {
+  post_id: number;
+  content: string;
+}
+
 // Helper function to create excerpt from content
 export function createExcerpt(content: string, wordLimit: number = 40): string {
   const words = content.split(/\s+/);
@@ -201,6 +206,35 @@ export async function createPost(data: CreatePostData): Promise<Post> {
   if (!response.ok) {
     const error = await response.json().catch(() => ({ detail: 'Failed to create post' }));
     throw new Error(error.detail || 'Failed to create post');
+  }
+
+  return response.json();
+}
+
+// Comment creation function
+export async function createComment(data: CreateCommentData): Promise<Comment> {
+  // Get JWT token from localStorage
+  const token = typeof window !== 'undefined' ? localStorage.getItem('learnloop_token') : null;
+  
+  if (!token) {
+    throw new Error('Authentication required. Please login first.');
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/api/comments`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ detail: 'Failed to create comment' }));
+    throw new Error(error.detail || 'Failed to create comment');
   }
 
   return response.json();

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { getPost } from '../../lib/api';
+import CommentsSection from './CommentsSection';
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -79,34 +80,8 @@ export default async function PostPage({ params }: PostPageProps) {
               </div>
             </article>
 
-            {/* Comments Section */}
-            <section>
-              <div className="mb-6">
-                <h2 className="text-base font-semibold text-gray-900">
-                  Comments ({post.comments?.length || 0})
-                </h2>
-                <div className="mt-2 border-t border-gray-200"></div>
-              </div>
-
-              {!post.comments || post.comments.length === 0 ? (
-                <div className="py-8">
-                  <p className="text-sm text-gray-600 text-center">No comments yet</p>
-                </div>
-              ) : (
-                <div className="space-y-6">
-                  {post.comments.map((comment) => (
-                    <div key={comment.id} className="border-l-2 border-gray-200 pl-4 py-2">
-                      <div className="flex items-center gap-2 text-xs text-gray-600 mb-2">
-                        <span className="font-medium text-gray-900">{comment.author.username}</span>
-                        <span>·</span>
-                        <span>{new Date(comment.created_at).toLocaleDateString()}</span>
-                      </div>
-                      <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{comment.content}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </section>
+            {/* Comments Section - now a client component */}
+            <CommentsSection postId={parseInt(postId)} initialComments={post.comments || []} />
           </>
         )}
       </div>
