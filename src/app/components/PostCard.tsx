@@ -9,9 +9,9 @@ export default function PostCard({ post }: PostCardProps) {
   return (
     <article className="border-b border-gray-200 pb-8">
       <Link href={`/posts/${post.id}`} className="block group mb-2">
-        <h3 className="text-lg font-medium text-gray-900 group-hover:text-blue-700">
+        <h2 className="text-lg font-medium text-gray-900 group-hover:text-blue-700">
           {post.title}
-        </h3>
+        </h2>
       </Link>
       
       <div className="flex items-center gap-2 text-xs text-gray-600 mb-3">

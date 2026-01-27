@@ -23,7 +23,7 @@ export default function Pagination({ currentPage, totalPages, basePath = '' }: P
   }
 
   return (
-    <div className="flex justify-between items-center mt-12 pt-8 border-t border-gray-200">
+    <div className="flex justify-center items-center gap-8 mt-12 pt-8 border-t border-gray-200">
       <button
         onClick={() => handlePageChange(currentPage - 1)}
         disabled={currentPage <= 1}
