@@ -44,6 +44,27 @@ export interface FeedResponse {
   total_pages: number;
 }
 
+export interface RegisterData {
+  username: string;
+  email: string;
+  password: string;
+}
+
+export interface LoginData {
+  email: string;
+  password: string;
+}
+
+export interface AuthResponse {
+  access_token: string;
+  token_type: string;
+  user?: {
+    id: number;
+    username: string;
+    email: string;
+  };
+}
+
 // Helper function to create excerpt from content
 export function createExcerpt(content: string, wordLimit: number = 40): string {
   const words = content.split(/\s+/);
@@ -104,6 +125,47 @@ export async function getPost(postId: string): Promise<PostDetail> {
 
   if (!response.ok) {
     throw new Error('Failed to fetch post');
+  }
+
+  return response.json();
+}
+
+// Auth API functions
+export async function register(data: RegisterData): Promise<AuthResponse> {
+  const response = await fetch(
+    `${API_BASE_URL}/api/auth/register`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ detail: 'Registration failed' }));
+    throw new Error(error.detail || 'Registration failed');
+  }
+
+  return response.json();
+}
+
+export async function login(data: LoginData): Promise<AuthResponse> {
+  const response = await fetch(
+    `${API_BASE_URL}/api/auth/login`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ detail: 'Login failed' }));
+    throw new Error(error.detail || 'Login failed');
   }
 
   return response.json();
