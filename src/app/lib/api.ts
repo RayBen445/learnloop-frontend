@@ -28,6 +28,7 @@ export interface Comment {
     id: number;
     username: string;
   };
+  vote_count: number;
   created_at: string;
   updated_at: string;
 }
@@ -74,6 +75,24 @@ export interface CreatePostData {
 export interface CreateCommentData {
   post_id: number;
   content: string;
+}
+
+export interface Vote {
+  id: number;
+  user_id: number;
+  target_type: 'post' | 'comment';
+  target_id: number;
+  created_at: string;
+}
+
+export interface CreateVoteData {
+  target_type: 'post' | 'comment';
+  target_id: number;
+}
+
+export interface VoteStatus {
+  vote_count: number;
+  user_vote_id?: number;
 }
 
 // Helper function to create excerpt from content
@@ -235,6 +254,103 @@ export async function createComment(data: CreateCommentData): Promise<Comment> {
   if (!response.ok) {
     const error = await response.json().catch(() => ({ detail: 'Failed to create comment' }));
     throw new Error(error.detail || 'Failed to create comment');
+  }
+
+  return response.json();
+}
+
+// Vote functions
+export async function createVote(data: CreateVoteData): Promise<Vote> {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('learnloop_token') : null;
+  
+  if (!token) {
+    throw new Error('Authentication required. Please login first.');
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/api/votes`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ detail: 'Failed to create vote' }));
+    throw new Error(error.detail || 'Failed to create vote');
+  }
+
+  return response.json();
+}
+
+export async function deleteVote(voteId: number): Promise<void> {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('learnloop_token') : null;
+  
+  if (!token) {
+    throw new Error('Authentication required. Please login first.');
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/api/votes/${voteId}`,
+    {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ detail: 'Failed to delete vote' }));
+    throw new Error(error.detail || 'Failed to delete vote');
+  }
+}
+
+export async function getPostVotes(postId: number): Promise<VoteStatus> {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('learnloop_token') : null;
+  
+  const headers: HeadersInit = {};
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/api/votes/posts/${postId}`,
+    { 
+      headers,
+      cache: 'no-store'
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch vote status');
+  }
+
+  return response.json();
+}
+
+export async function getCommentVotes(commentId: number): Promise<VoteStatus> {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('learnloop_token') : null;
+  
+  const headers: HeadersInit = {};
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/api/votes/comments/${commentId}`,
+    { 
+      headers,
+      cache: 'no-store'
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch vote status');
   }
 
   return response.json();

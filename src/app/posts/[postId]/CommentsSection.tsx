@@ -2,6 +2,7 @@
 
 import { useState, FormEvent } from 'react';
 import { createComment, Comment } from '../../lib/api';
+import VoteButton from '../../components/VoteButton';
 
 interface CommentsSectionProps {
   postId: number;
@@ -69,6 +70,12 @@ export default function CommentsSection({ postId, initialComments }: CommentsSec
                 <span className="font-medium text-gray-900">{comment.author.username}</span>
                 <span>·</span>
                 <span>{new Date(comment.created_at).toLocaleDateString()}</span>
+                <span>·</span>
+                <VoteButton 
+                  targetType="comment" 
+                  targetId={comment.id} 
+                  initialVoteCount={comment.vote_count || 0}
+                />
               </div>
               <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{comment.content}</p>
             </div>

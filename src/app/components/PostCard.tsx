@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Post } from '../lib/api';
+import VoteButton from './VoteButton';
 
 interface PostCardProps {
   post: Post;
@@ -24,12 +25,11 @@ export default function PostCard({ post }: PostCardProps) {
           {post.topic.name}
         </Link>
         <span>·</span>
-        <span className="flex items-center gap-1">
-          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-          </svg>
-          {post.vote_count}
-        </span>
+        <VoteButton 
+          targetType="post" 
+          targetId={post.id} 
+          initialVoteCount={post.vote_count}
+        />
       </div>
       
       <p className="text-sm text-gray-700 leading-relaxed line-clamp-2">
