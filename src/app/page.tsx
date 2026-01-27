@@ -1,4 +1,3 @@
-import { Suspense } from 'react';
 import { getHomeFeed } from './lib/api';
 import PostCard from './components/PostCard';
 import Pagination from './components/Pagination';
@@ -83,13 +82,11 @@ export default async function Home({ searchParams }: HomePageProps) {
             </div>
 
             {/* Pagination */}
-            <Suspense fallback={<div className="mt-8 text-center text-gray-500">Loading...</div>}>
-              <Pagination 
-                currentPage={feed.page} 
-                totalPages={feed.total_pages}
-                basePath="/"
-              />
-            </Suspense>
+            <Pagination 
+              currentPage={feed.page} 
+              totalPages={feed.total_pages}
+              basePath="/"
+            />
           </>
         )}
       </div>
