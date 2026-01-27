@@ -27,19 +27,19 @@ export default function Pagination({ currentPage, totalPages, basePath = '' }: P
       <button
         onClick={() => handlePageChange(currentPage - 1)}
         disabled={currentPage <= 1}
-        className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-blue-700 transition-colors"
+        className="px-5 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white transition-colors"
       >
         Previous
       </button>
       
-      <span className="text-gray-700">
+      <span className="text-sm text-gray-600 font-medium">
         Page {currentPage} of {totalPages}
       </span>
       
       <button
         onClick={() => handlePageChange(currentPage + 1)}
         disabled={currentPage >= totalPages}
-        className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-blue-700 transition-colors"
+        className="px-5 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white transition-colors"
       >
         Next
       </button>
