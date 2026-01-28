@@ -1,6 +1,7 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
+import { useMemo } from 'react';
 
 interface LoadingStateProps {
   size?: 'sm' | 'md' | 'lg';
@@ -11,6 +12,8 @@ export default function LoadingState({
   size = 'md',
   className = ''
 }: LoadingStateProps) {
+  const shouldReduceMotion = useReducedMotion();
+  
   // Size mapping
   const sizeMap = {
     sm: 40,
@@ -27,6 +30,10 @@ export default function LoadingState({
   const baseSize = sizeMap[size];
   const dot = dotSize[size];
   const radius = baseSize / 3;
+  
+  // Generate unique IDs for gradients to avoid conflicts
+  const gradientId = useMemo(() => `loadingGradient-${Math.random().toString(36).substr(2, 9)}`, []);
+  const glowId = useMemo(() => `nodeGlow-${Math.random().toString(36).substr(2, 9)}`, []);
   
   // Create 6 nodes arranged in a circle
   const nodes = Array.from({ length: 6 }, (_, i) => ({
@@ -50,9 +57,9 @@ export default function LoadingState({
       opacity: 0.3,
     },
     animate: (custom: number) => ({
-      scale: [0.5, 1, 0.5],
-      opacity: [0.3, 1, 0.3],
-      transition: {
+      scale: shouldReduceMotion ? 1 : [0.5, 1, 0.5],
+      opacity: shouldReduceMotion ? 1 : [0.3, 1, 0.3],
+      transition: shouldReduceMotion ? { duration: 0 } : {
         duration: 2,
         repeat: Infinity,
         ease: "easeInOut" as const,
@@ -68,9 +75,9 @@ export default function LoadingState({
       opacity: 0,
     },
     animate: {
-      pathLength: [0, 1, 0],
-      opacity: [0, 0.4, 0],
-      transition: {
+      pathLength: shouldReduceMotion ? 1 : [0, 1, 0],
+      opacity: shouldReduceMotion ? 0.4 : [0, 0.4, 0],
+      transition: shouldReduceMotion ? { duration: 0 } : {
         duration: 3,
         repeat: Infinity,
         ease: "easeInOut" as const,
@@ -88,13 +95,13 @@ export default function LoadingState({
       >
         {/* Define gradient */}
         <defs>
-          <linearGradient id="loadingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor={gradientColors[0]} />
             <stop offset="50%" stopColor={gradientColors[1]} />
             <stop offset="100%" stopColor={gradientColors[2]} />
           </linearGradient>
           
-          <radialGradient id="nodeGlow">
+          <radialGradient id={glowId}>
             <stop offset="0%" stopColor={gradientColors[1]} stopOpacity="0.8" />
             <stop offset="100%" stopColor={gradientColors[1]} stopOpacity="0" />
           </radialGradient>
@@ -112,16 +119,12 @@ export default function LoadingState({
                 y1={node.y}
                 x2={nextNode.x}
                 y2={nextNode.y}
-                stroke="url(#loadingGradient)"
+                stroke={`url(#${gradientId})`}
                 strokeWidth="1.5"
                 strokeLinecap="round"
                 variants={connectionVariants}
                 initial="initial"
                 animate="animate"
-                style={{ 
-                  // Respect reduced motion preference
-                  animation: 'var(--animation, running)',
-                }}
               />
             );
           })}
@@ -134,14 +137,11 @@ export default function LoadingState({
                 cx={node.x}
                 cy={node.y}
                 r={dot * 1.5}
-                fill="url(#nodeGlow)"
+                fill={`url(#${glowId})`}
                 variants={nodeVariants}
                 initial="initial"
                 animate="animate"
                 custom={i}
-                style={{ 
-                  animation: 'var(--animation, running)',
-                }}
               />
               
               {/* Main node */}
@@ -149,14 +149,11 @@ export default function LoadingState({
                 cx={node.x}
                 cy={node.y}
                 r={dot / 2}
-                fill="url(#loadingGradient)"
+                fill={`url(#${gradientId})`}
                 variants={nodeVariants}
                 initial="initial"
                 animate="animate"
                 custom={i}
-                style={{ 
-                  animation: 'var(--animation, running)',
-                }}
               />
             </g>
           ))}
@@ -167,29 +164,18 @@ export default function LoadingState({
             cy={0}
             r={dot / 2}
             fill={gradientColors[1]}
-            animate={{
+            animate={shouldReduceMotion ? {} : {
               scale: [1, 1.3, 1],
               opacity: [0.5, 1, 0.5],
             }}
-            transition={{
+            transition={shouldReduceMotion ? { duration: 0 } : {
               duration: 2,
               repeat: Infinity,
               ease: "easeInOut",
             }}
-            style={{ 
-              animation: 'var(--animation, running)',
-            }}
           />
         </g>
       </svg>
-      
-      <style jsx>{`
-        @media (prefers-reduced-motion: reduce) {
-          svg {
-            --animation: paused;
-          }
-        }
-      `}</style>
     </div>
   );
 }

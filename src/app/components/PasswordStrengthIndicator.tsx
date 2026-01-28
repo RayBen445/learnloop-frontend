@@ -118,7 +118,7 @@ export default function PasswordStrengthIndicator({
             transition={{ duration: 0.2 }}
             className="flex items-center gap-2 text-xs text-gradient-secondary-from"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
             <span className="font-medium">
@@ -145,11 +145,11 @@ function RequirementItem({ met, text }: RequirementItemProps) {
       className="flex items-center gap-2"
     >
       {met ? (
-        <svg className="w-4 h-4 text-gradient-secondary-from flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-4 h-4 text-gradient-secondary-from flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
         </svg>
       ) : (
-        <svg className="w-4 h-4 text-luxury-gray-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-4 h-4 text-luxury-gray-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <circle cx="12" cy="12" r="10" strokeWidth={2} />
         </svg>
       )}
