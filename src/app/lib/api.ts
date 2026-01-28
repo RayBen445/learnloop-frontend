@@ -115,6 +115,7 @@ export interface User {
   id: number;
   username: string;
   email: string;
+  email_verified: boolean;
   bio?: string;
   created_at: string;
 }
@@ -467,6 +468,49 @@ export async function updateUser(data: UpdateUserData): Promise<User> {
   if (!response.ok) {
     const error = await response.json().catch(() => ({ detail: 'Failed to update user' }));
     throw new Error(error.detail || 'Failed to update user');
+  }
+
+  return response.json();
+}
+
+// Email verification function
+export async function verifyEmail(token: string): Promise<{ message: string }> {
+  const response = await fetch(
+    `${getApiBaseUrl()}/api/auth/verify-email?token=${token}`,
+    {
+      method: 'GET',
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ detail: 'Verification failed' }));
+    throw new Error(error.detail || 'Verification failed');
+  }
+
+  return response.json();
+}
+
+// Resend verification email
+export async function resendVerificationEmail(): Promise<{ message: string }> {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('learnloop_token') : null;
+  
+  if (!token) {
+    throw new Error('Authentication required. Please login first.');
+  }
+
+  const response = await fetch(
+    `${getApiBaseUrl()}/api/auth/resend-verification`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ detail: 'Failed to resend verification email' }));
+    throw new Error(error.detail || 'Failed to resend verification email');
   }
 
   return response.json();

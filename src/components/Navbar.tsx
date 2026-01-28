@@ -1,26 +1,17 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import LogoSymbol from './LogoSymbol';
-import { getCurrentUser, User } from '../app/lib/api';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Navbar() {
-  const [user, setUser] = useState<User | null>(null);
+  const { user, mounted } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-
-  // Check auth status on mount
-  useEffect(() => {
-    const token = localStorage.getItem('learnloop_token');
-    if (token) {
-      getCurrentUser()
-        .then(setUser)
-        .catch(() => setUser(null));
-    }
-  }, []);
+  const { logout } = useAuth();
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -37,109 +28,115 @@ export default function Navbar() {
   }, [isMenuOpen]);
 
   const handleLogout = () => {
-    localStorage.removeItem('learnloop_token');
-    setUser(null);
+    logout();
     setIsMenuOpen(false);
     router.push('/');
   };
 
+  // Prevent hydration mismatch by not rendering auth-dependent content until mounted
+  if (!mounted) {
+    return (
+      <nav className="border-b border-dark-border bg-dark-surface">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+          {/* Left: Logo */}
+          <Link href="/" className="inline-flex items-center gap-3 transition-opacity hover:opacity-80">
+            <div className="text-luxury-white">
+              <LogoSymbol size={28} />
+            </div>
+            <span className="text-lg font-semibold tracking-tight text-luxury-white">
+              LearnLoop
+            </span>
+          </Link>
+          
+          {/* Right: Empty space during hydration */}
+          <div className="w-32"></div>
+        </div>
+      </nav>
+    );
+  }
+
   return (
-    <nav 
-      className="border-b" 
-      style={{ 
-        borderColor: 'var(--color-luxury-gray-200)', 
-        backgroundColor: 'var(--color-luxury-white)' 
-      }}
-    >
-      <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
+    <nav className="border-b border-dark-border bg-dark-surface backdrop-blur-sm bg-opacity-80 sticky top-0 z-50">
+      <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Left: Logo */}
-        <Link 
-          href="/" 
-          className="inline-flex items-center gap-3 transition-opacity hover:opacity-70"
-        >
-          <div style={{ color: 'var(--color-luxury-black)' }}>
+        <Link href="/" className="inline-flex items-center gap-3 transition-opacity hover:opacity-80">
+          <div className="text-gradient-primary">
             <LogoSymbol size={28} />
           </div>
-          
-          <span 
-            className="text-lg font-medium tracking-tight"
-            style={{ 
-              fontFamily: 'var(--font-primary)',
-              color: 'var(--color-luxury-black)' 
-            }}
-          >
+          <span className="text-lg font-semibold tracking-tight text-luxury-white">
             LearnLoop
           </span>
         </Link>
 
-        {/* Right: Account Menu (if logged in) */}
-        {user && (
-          <div className="relative" ref={menuRef}>
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-sm font-medium tracking-tight px-3 py-2 rounded transition-opacity hover:opacity-70"
-              style={{ 
-                fontFamily: 'var(--font-primary)',
-                color: 'var(--color-luxury-black)',
-                backgroundColor: isMenuOpen ? 'var(--color-luxury-gray-100)' : 'transparent'
-              }}
+        {/* Right: Navigation */}
+        {user ? (
+          // Logged in: Show Create, Settings, and user dropdown with Logout
+          <div className="flex items-center gap-6">
+            <Link
+              href="/create"
+              className="text-sm font-medium tracking-tight text-luxury-gray-300 hover:text-luxury-white transition-colors"
             >
-              {user.username}
-            </button>
+              Create
+            </Link>
+            
+            <Link
+              href="/settings"
+              className="text-sm font-medium tracking-tight text-luxury-gray-300 hover:text-luxury-white transition-colors"
+            >
+              Settings
+            </Link>
 
-            {/* Dropdown Menu */}
-            {isMenuOpen && (
-              <div 
-                className="absolute right-0 mt-1 w-48 border rounded"
-                style={{
-                  backgroundColor: 'var(--color-luxury-white)',
-                  borderColor: 'var(--color-luxury-gray-200)'
-                }}
+            <div className="relative" ref={menuRef}>
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className={`text-sm font-medium tracking-tight px-4 py-2 rounded-lg transition-all ${
+                  isMenuOpen 
+                    ? 'bg-dark-surface-elevated text-luxury-white' 
+                    : 'text-luxury-gray-300 hover:text-luxury-white hover:bg-dark-surface-elevated'
+                }`}
               >
-                <Link
-                  href={`/users/${user.id}`}
-                  className="block px-4 py-2 text-sm transition-opacity hover:opacity-70"
-                  style={{ 
-                    fontFamily: 'var(--font-primary)',
-                    color: 'var(--color-luxury-black)',
-                    backgroundColor: 'transparent'
-                  }}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Profile
-                </Link>
-                
-                <Link
-                  href="/settings"
-                  className="block px-4 py-2 text-sm transition-opacity hover:opacity-70"
-                  style={{ 
-                    fontFamily: 'var(--font-primary)',
-                    color: 'var(--color-luxury-black)',
-                    backgroundColor: 'transparent'
-                  }}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Settings
-                </Link>
-                
-                <div 
-                  className="border-t" 
-                  style={{ borderColor: 'var(--color-luxury-gray-200)' }}
-                />
-                
-                <button
-                  onClick={handleLogout}
-                  className="block w-full text-left px-4 py-2 text-sm transition-opacity hover:opacity-70"
-                  style={{ 
-                    fontFamily: 'var(--font-primary)',
-                    color: 'var(--color-luxury-black)',
-                    backgroundColor: 'transparent'
-                  }}
-                >
-                  Log out
-                </button>
-              </div>
-            )}
+                {user.username}
+              </button>
+
+              {/* Dropdown Menu */}
+              {isMenuOpen && (
+                <div className="absolute right-0 mt-2 w-48 border border-dark-border bg-dark-surface-elevated rounded-lg shadow-xl overflow-hidden">
+                  <Link
+                    href={`/users/${user.id}`}
+                    className="block px-4 py-3 text-sm text-luxury-gray-300 hover:text-luxury-white hover:bg-dark-surface transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Profile
+                  </Link>
+                  
+                  <div className="border-t border-dark-border" />
+                  
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full text-left px-4 py-3 text-sm text-luxury-gray-300 hover:text-luxury-white hover:bg-dark-surface transition-colors"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
+          // Logged out: Show Login and Register links
+          <div className="flex items-center gap-4">
+            <Link
+              href="/login"
+              className="text-sm font-medium tracking-tight px-4 py-2 text-luxury-gray-300 hover:text-luxury-white transition-colors"
+            >
+              Login
+            </Link>
+            
+            <Link
+              href="/register"
+              className="text-sm font-medium tracking-tight px-6 py-2.5 rounded-lg bg-gradient-primary hover:opacity-90 transition-opacity text-white shadow-lg"
+            >
+              Register
+            </Link>
           </div>
         )}
       </div>
