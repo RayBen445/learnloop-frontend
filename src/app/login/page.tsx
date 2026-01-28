@@ -40,11 +40,6 @@ export default function LoginPage() {
       } else if (errorMessage.toLowerCase().includes('verify') || errorMessage.toLowerCase().includes('verification') || errorMessage.toLowerCase().includes('not verified')) {
         setError('Please verify your email address before logging in. Check your inbox for the verification link.');
         setIsUnverified(true);
-        // Store the token anyway so resend can work
-        if (err instanceof Error && err.message.includes('access_token')) {
-          // Extract token if included in error (some backends send it)
-          // For now, we'll just rely on the resend endpoint requiring authentication
-        }
       } else if (errorMessage.includes('network') || errorMessage.includes('fetch')) {
         setError('Network error. Please check your connection and try again.');
       } else {

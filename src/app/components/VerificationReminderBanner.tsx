@@ -8,15 +8,15 @@ export default function VerificationReminderBanner() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
 
-  if (isDismissed) return null;
-
   return (
-    <motion.div
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="bg-amber-950 bg-opacity-30 border-b border-amber-500"
-    >
+    <AnimatePresence>
+      {!isDismissed && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          className="bg-amber-950 bg-opacity-30 border-b border-amber-500"
+        >
       <div className="max-w-6xl mx-auto px-6 py-3">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 flex-1">
@@ -68,5 +68,7 @@ export default function VerificationReminderBanner() {
         </AnimatePresence>
       </div>
     </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

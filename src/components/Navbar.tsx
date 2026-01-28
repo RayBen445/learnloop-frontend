@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import LogoSymbol from './LogoSymbol';
 import { useAuth } from '../contexts/AuthContext';
 import VerificationReminderBanner from '../app/components/VerificationReminderBanner';
+import { AnimatePresence } from 'framer-motion';
 
 export default function Navbar() {
   const { user, mounted } = useAuth();
@@ -156,7 +157,9 @@ export default function Navbar() {
       </nav>
       
       {/* Verification reminder banner for authenticated but unverified users */}
-      {user && !isVerified && <VerificationReminderBanner />}
+      <AnimatePresence>
+        {user && !isVerified && <VerificationReminderBanner />}
+      </AnimatePresence>
     </>
   );
 }

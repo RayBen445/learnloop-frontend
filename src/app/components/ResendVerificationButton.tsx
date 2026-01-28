@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { resendVerificationEmail } from '../lib/api';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -13,6 +13,24 @@ export default function ResendVerificationButton({ email }: ResendVerificationBu
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
 
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    
+    if (success) {
+      // Reset success state after 5 seconds
+      timeoutId = setTimeout(() => {
+        setSuccess(false);
+      }, 5000);
+    }
+    
+    // Cleanup timeout on unmount
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [success]);
+
   const handleResend = async () => {
     setError('');
     setLoading(true);
@@ -21,11 +39,6 @@ export default function ResendVerificationButton({ email }: ResendVerificationBu
     try {
       await resendVerificationEmail(email);
       setSuccess(true);
-      
-      // Reset success state after 5 seconds
-      setTimeout(() => {
-        setSuccess(false);
-      }, 5000);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to resend verification email');
     } finally {
@@ -46,6 +59,8 @@ export default function ResendVerificationButton({ email }: ResendVerificationBu
       <AnimatePresence mode="wait">
         {success && (
           <motion.div
+            role="status"
+            aria-live="polite"
             initial={{ opacity: 0, scale: 0.9, y: -10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: -10 }}
@@ -82,6 +97,8 @@ export default function ResendVerificationButton({ email }: ResendVerificationBu
 
         {error && (
           <motion.div
+            role="alert"
+            aria-live="assertive"
             initial={{ opacity: 0, scale: 0.9, y: -10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: -10 }}

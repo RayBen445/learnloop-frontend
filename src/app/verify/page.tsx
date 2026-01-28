@@ -1,7 +1,7 @@
 'use client';
 
 import { Suspense, useEffect, useState } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { verifyEmail } from '../lib/api';
 import { motion } from 'framer-motion';
@@ -9,7 +9,6 @@ import ResendVerificationButton from '../components/ResendVerificationButton';
 
 function VerifyContent() {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const [status, setStatus] = useState<'verifying' | 'success' | 'error' | 'already_verified'>('verifying');
   const [message, setMessage] = useState('');
 
