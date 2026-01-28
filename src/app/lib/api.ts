@@ -1,6 +1,23 @@
 // API utility functions for LearnLoop
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+/**
+ * Validates and returns the API base URL
+ * Fails loudly if NEXT_PUBLIC_API_URL is not configured
+ */
+function getApiBaseUrl(): string {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  
+  if (!apiUrl) {
+    throw new Error(
+      'NEXT_PUBLIC_API_URL environment variable is not configured. ' +
+      'Please set it in your .env.local file or environment variables.'
+    );
+  }
+  
+  return apiUrl;
+}
+
+const API_BASE_URL = getApiBaseUrl();
 
 // Types
 export interface Post {
