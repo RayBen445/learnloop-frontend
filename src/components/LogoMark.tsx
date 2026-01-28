@@ -32,7 +32,7 @@ export default function LogoMark({
       opacity: 1,
       transition: {
         duration: 0.8,
-        ease: [0.43, 0.13, 0.23, 0.96], // Custom easing
+        ease: [0.43, 0.13, 0.23, 0.96] as any, // Custom easing
       }
     },
     pulse: {
@@ -40,7 +40,7 @@ export default function LogoMark({
       transition: {
         duration: 1.5,
         repeat: Infinity,
-        ease: "easeInOut",
+        ease: "easeInOut" as const,
       }
     }
   };
@@ -57,7 +57,7 @@ export default function LogoMark({
       transition: {
         duration: 0.8,
         delay: 0.3,
-        ease: "easeInOut",
+        ease: "easeInOut" as const,
       }
     }
   };
@@ -76,7 +76,7 @@ export default function LogoMark({
       transition: {
         duration: 1,
         delay: 0.5,
-        ease: [0.43, 0.13, 0.23, 0.96],
+        ease: [0.43, 0.13, 0.23, 0.96] as any,
       }
     }
   };
@@ -93,7 +93,7 @@ export default function LogoMark({
       transition: {
         duration: 0.6,
         delay: 1.3,
-        ease: "easeOut",
+        ease: "easeOut" as const,
       }
     }
   };

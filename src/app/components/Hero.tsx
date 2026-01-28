@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuth } from '../../contexts/AuthContext';
-import LogoMark from '../../../components/LogoMark';
+import LogoMark from '../../components/LogoMark';
 import Link from 'next/link';
 
 export default function Hero() {
