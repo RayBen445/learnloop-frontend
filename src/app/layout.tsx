@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Navbar from "../components/Navbar";
 import { AuthProvider } from "../contexts/AuthContext";
+import VerificationBanner from "./components/VerificationBanner";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -24,6 +25,8 @@ export default function RootLayout({
         <AuthProvider>
           {/* Global Navigation */}
           <Navbar />
+          {/* Verification Banner for unverified users */}
+          <VerificationBanner />
           {children}
         </AuthProvider>
       </body>
