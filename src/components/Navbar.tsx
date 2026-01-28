@@ -9,11 +9,10 @@ import VerificationReminderBanner from '../app/components/VerificationReminderBa
 import { AnimatePresence } from 'framer-motion';
 
 export default function Navbar() {
-  const { user, mounted } = useAuth();
+  const { user, mounted, loading, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-  const { logout } = useAuth();
 
   // Check if user is verified
   const isVerified = user?.email_verified ?? false;
@@ -38,8 +37,8 @@ export default function Navbar() {
     router.push('/');
   };
 
-  // Prevent hydration mismatch by not rendering auth-dependent content until mounted
-  if (!mounted) {
+  // Prevent hydration mismatch by not rendering auth-dependent content until mounted and loaded
+  if (!mounted || loading) {
     return (
       <nav className="border-b border-dark-border bg-dark-surface">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
