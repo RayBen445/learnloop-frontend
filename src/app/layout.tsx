@@ -20,7 +20,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
       </head>
-      <body className="antialiased" style={{ fontFamily: 'var(--font-primary)', backgroundColor: 'var(--color-luxury-white)', color: 'var(--color-luxury-black)' }}>
+      <body className="antialiased">
         <AuthProvider>
           {/* Global Navigation */}
           <Navbar />

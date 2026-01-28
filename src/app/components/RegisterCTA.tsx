@@ -12,52 +12,31 @@ export default function RegisterCTA() {
   }
 
   return (
-    <div 
-      className="border rounded-lg p-8 mb-12 text-center"
-      style={{
-        borderColor: 'var(--color-luxury-gray-200)',
-        backgroundColor: 'var(--color-luxury-gray-50)'
-      }}
-    >
-      <h2 
-        className="text-xl font-semibold mb-3"
-        style={{ 
-          fontFamily: 'var(--font-primary)',
-          color: 'var(--color-luxury-black)'
-        }}
-      >
-        Join LearnLoop Today
-      </h2>
-      <p 
-        className="text-sm mb-6"
-        style={{ color: 'var(--color-luxury-gray-600)' }}
-      >
-        Create an account to share your knowledge, engage with the community, and grow your learning journey.
-      </p>
-      <div className="flex items-center justify-center gap-4">
-        <Link
-          href="/register"
-          className="px-6 py-3 text-sm font-medium rounded transition-opacity hover:opacity-80"
-          style={{ 
-            fontFamily: 'var(--font-primary)',
-            color: 'var(--color-luxury-white)',
-            backgroundColor: 'var(--color-luxury-black)'
-          }}
-        >
-          Create Account
-        </Link>
-        <Link
-          href="/login"
-          className="px-6 py-3 text-sm font-medium rounded transition-opacity hover:opacity-80"
-          style={{ 
-            fontFamily: 'var(--font-primary)',
-            color: 'var(--color-luxury-black)',
-            backgroundColor: 'transparent',
-            border: '1px solid var(--color-luxury-gray-300)'
-          }}
-        >
-          Sign In
-        </Link>
+    <div className="relative border border-dark-border bg-dark-surface-elevated rounded-2xl p-12 mb-12 text-center overflow-hidden">
+      {/* Gradient background accent */}
+      <div className="absolute inset-0 bg-gradient-primary opacity-5"></div>
+      
+      <div className="relative z-10">
+        <h2 className="text-2xl font-bold mb-3 text-gradient-primary">
+          Join LearnLoop Today
+        </h2>
+        <p className="text-base text-luxury-gray-400 mb-8 max-w-2xl mx-auto">
+          Create an account to share your knowledge, engage with the community, and grow your learning journey.
+        </p>
+        <div className="flex items-center justify-center gap-4">
+          <Link
+            href="/register"
+            className="px-8 py-3.5 text-sm font-semibold rounded-lg bg-gradient-primary hover:opacity-90 transition-opacity text-white shadow-xl"
+          >
+            Create Account
+          </Link>
+          <Link
+            href="/login"
+            className="px-8 py-3.5 text-sm font-semibold rounded-lg bg-transparent border-2 border-dark-border hover:border-luxury-gray-600 transition-colors text-luxury-gray-300 hover:text-luxury-white"
+          >
+            Sign In
+          </Link>
+        </div>
       </div>
     </div>
   );

@@ -1,25 +1,71 @@
 @import "tailwindcss";
 
 @theme {
-  /* Neutral Color Palette - Quiet Luxury */
-  --color-luxury-white: #fafaf9;
-  --color-luxury-black: #1a1a1a;
-  --color-luxury-gray-50: #f8f8f7;
-  --color-luxury-gray-100: #efeeec;
-  --color-luxury-gray-200: #e5e3e0;
-  --color-luxury-gray-300: #d1cdc7;
-  --color-luxury-gray-400: #a8a29e;
-  --color-luxury-gray-500: #78716c;
-  --color-luxury-gray-600: #57534e;
-  --color-luxury-gray-700: #44403c;
-  --color-luxury-gray-800: #292524;
-  --color-luxury-gray-900: #1c1917;
+  /* Dark Background Colors - Luxury Dark Theme */
+  --color-dark-bg: #0a0a0b;
+  --color-dark-surface: #121214;
+  --color-dark-surface-elevated: #1a1a1d;
+  --color-dark-border: #27272a;
   
-  /* Subtle Accent - Muted Sage (used sparingly) */
-  --color-accent: #7c9885;
-  --color-accent-light: #9db4a3;
-  --color-accent-dark: #5d7367;
+  /* Neutral Colors */
+  --color-luxury-white: #fafafa;
+  --color-luxury-black: #09090b;
+  --color-luxury-gray-50: #fafafa;
+  --color-luxury-gray-100: #f4f4f5;
+  --color-luxury-gray-200: #e4e4e7;
+  --color-luxury-gray-300: #d4d4d8;
+  --color-luxury-gray-400: #a1a1aa;
+  --color-luxury-gray-500: #71717a;
+  --color-luxury-gray-600: #52525b;
+  --color-luxury-gray-700: #3f3f46;
+  --color-luxury-gray-800: #27272a;
+  --color-luxury-gray-900: #18181b;
+  
+  /* Primary Gradient Colors - Indigo → Violet → Cyan */
+  --color-gradient-primary-from: #6366f1;    /* indigo-500 */
+  --color-gradient-primary-via: #8b5cf6;     /* violet-500 */
+  --color-gradient-primary-to: #06b6d4;      /* cyan-500 */
+  
+  /* Secondary Gradient Colors - Emerald → Teal → Sky */
+  --color-gradient-secondary-from: #10b981;  /* emerald-500 */
+  --color-gradient-secondary-via: #14b8a6;   /* teal-500 */
+  --color-gradient-secondary-to: #0ea5e9;    /* sky-500 */
+  
+  /* Accent Colors */
+  --color-accent-indigo: #6366f1;
+  --color-accent-violet: #8b5cf6;
+  --color-accent-cyan: #06b6d4;
+  --color-accent-emerald: #10b981;
+  --color-accent-teal: #14b8a6;
   
   /* Font Family */
   --font-primary: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* Global styles */
+body {
+  @apply bg-dark-bg text-luxury-white antialiased;
+}
+
+/* Gradient utilities - can be used with bg-gradient-primary, bg-gradient-secondary */
+.bg-gradient-primary {
+  background: linear-gradient(135deg, var(--color-gradient-primary-from), var(--color-gradient-primary-via), var(--color-gradient-primary-to));
+}
+
+.bg-gradient-secondary {
+  background: linear-gradient(135deg, var(--color-gradient-secondary-from), var(--color-gradient-secondary-via), var(--color-gradient-secondary-to));
+}
+
+.text-gradient-primary {
+  background: linear-gradient(135deg, var(--color-gradient-primary-from), var(--color-gradient-primary-via), var(--color-gradient-primary-to));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-secondary {
+  background: linear-gradient(135deg, var(--color-gradient-secondary-from), var(--color-gradient-secondary-via), var(--color-gradient-secondary-to));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
