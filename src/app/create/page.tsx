@@ -119,24 +119,25 @@ export default function CreatePostPage() {
               <p className="mt-2 text-xs text-luxury-gray-500">
                 Enter the numeric ID of the topic for this post
               </p>
-          </div>
+            </div>
 
-          <div className="flex gap-3 pt-4">
-            <button
-              type="submit"
-              disabled={loading || !user?.email_verified}
-              className="flex-1 py-3.5 px-4 bg-gradient-primary text-white text-sm font-semibold rounded-lg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent-indigo focus:ring-offset-2 focus:ring-offset-dark-surface disabled:opacity-50 disabled:cursor-not-allowed transition-opacity shadow-lg"
-            >
-              {loading ? 'Creating...' : 'Create Post'}
-            </button>
-            <Link
-              href="/"
-              className="py-3.5 px-6 bg-transparent border-2 border-dark-border hover:border-luxury-gray-600 transition-colors text-luxury-gray-300 hover:text-luxury-white rounded-lg font-semibold text-sm text-center"
-            >
-              Cancel
-            </Link>
-          </div>
-        </form>
+            <div className="flex gap-3 pt-4">
+              <button
+                type="submit"
+                disabled={loading || !user?.email_verified}
+                className="flex-1 py-3.5 px-4 bg-gradient-primary text-white text-sm font-semibold rounded-lg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent-indigo focus:ring-offset-2 focus:ring-offset-dark-surface disabled:opacity-50 disabled:cursor-not-allowed transition-opacity shadow-lg"
+              >
+                {loading ? 'Creating...' : 'Create Post'}
+              </button>
+              <Link
+                href="/"
+                className="py-3.5 px-6 bg-transparent border-2 border-dark-border hover:border-luxury-gray-600 transition-colors text-luxury-gray-300 hover:text-luxury-white rounded-lg font-semibold text-sm text-center"
+              >
+                Cancel
+              </Link>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

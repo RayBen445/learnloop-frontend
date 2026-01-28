@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { verifyEmail } from '../lib/api';
 
-export default function VerifyPage() {
+function VerifyContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying');
@@ -106,5 +106,17 @@ export default function VerifyPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function VerifyPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-dark-bg flex items-center justify-center px-6">
+        <div className="w-16 h-16 border-4 border-accent-indigo border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    }>
+      <VerifyContent />
+    </Suspense>
   );
 }
