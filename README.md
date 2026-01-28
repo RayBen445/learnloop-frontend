@@ -72,6 +72,14 @@ src/app/
 npm run build
 ```
 
+## Deployment
+
+For production deployment to Vercel, see [DEPLOYMENT.md](./DEPLOYMENT.md) for:
+- Configuration verification
+- Troubleshooting Ghost 404 errors
+- Environment setup
+- Deployment checklist
+
 ## Files Created
 
 - `src/app/page.tsx` - Home feed page

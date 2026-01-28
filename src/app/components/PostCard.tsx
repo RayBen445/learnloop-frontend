@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Post } from '../lib/api';
+import VoteButton from './VoteButton';
 
 interface PostCardProps {
   post: Post;
@@ -7,32 +8,36 @@ interface PostCardProps {
 
 export default function PostCard({ post }: PostCardProps) {
   return (
-    <article className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-      <Link href={`/posts/${post.id}`} className="block">
-        <h2 className="text-xl font-semibold text-gray-900 mb-2 hover:text-blue-600">
+    <article className="border-b border-gray-200 pb-8">
+      <Link href={`/posts/${post.id}`} className="block group mb-2">
+        <h2 className="text-lg font-medium text-gray-900 group-hover:text-blue-700">
           {post.title}
         </h2>
       </Link>
       
-      <div className="flex items-center gap-3 text-sm text-gray-600 mb-3">
-        <span className="font-medium">{post.author.username}</span>
-        <span>•</span>
+      <div className="flex items-center gap-2 text-xs text-gray-600 mb-3">
+        <Link 
+          href={`/users/${post.author.id}`}
+          className="hover:underline"
+        >
+          {post.author.username}
+        </Link>
+        <span>·</span>
         <Link 
           href={`/topics/${post.topic.id}`}
-          className="text-blue-600 hover:underline"
+          className="text-blue-700 hover:underline"
         >
           {post.topic.name}
         </Link>
-        <span>•</span>
-        <span className="flex items-center gap-1">
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-          </svg>
-          {post.vote_count}
-        </span>
+        <span>·</span>
+        <VoteButton 
+          targetType="post" 
+          targetId={post.id} 
+          initialVoteCount={post.vote_count}
+        />
       </div>
       
-      <p className="text-gray-700 line-clamp-3">
+      <p className="text-sm text-gray-700 leading-relaxed line-clamp-2">
         {post.excerpt}
       </p>
     </article>

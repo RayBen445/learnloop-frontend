@@ -23,25 +23,25 @@ export default function Pagination({ currentPage, totalPages, basePath = '' }: P
   }
 
   return (
-    <div className="flex justify-center items-center gap-4 mt-8">
+    <div className="flex justify-center items-center gap-8 mt-12 pt-8 border-t border-gray-200">
       <button
         onClick={() => handlePageChange(currentPage - 1)}
         disabled={currentPage <= 1}
-        className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-blue-700 transition-colors"
+        className="text-sm text-gray-700 hover:text-gray-900 disabled:text-gray-400 disabled:cursor-not-allowed"
       >
-        Previous
+        ← Previous
       </button>
       
-      <span className="text-gray-700">
+      <span className="text-xs text-gray-600">
         Page {currentPage} of {totalPages}
       </span>
       
       <button
         onClick={() => handlePageChange(currentPage + 1)}
         disabled={currentPage >= totalPages}
-        className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-blue-700 transition-colors"
+        className="text-sm text-gray-700 hover:text-gray-900 disabled:text-gray-400 disabled:cursor-not-allowed"
       >
-        Next
+        Next →
       </button>
     </div>
   );
