@@ -2,7 +2,7 @@
 
 import { useState, useEffect, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import { getCurrentUser, updateUser } from '../lib/api';
+import { getCurrentUser, updateUser, ApiError } from '../lib/api';
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -30,6 +30,12 @@ export default function SettingsPage() {
     const loadUser = async () => {
       try {
         const user = await getCurrentUser();
+        // Handle new response format: { user: null } means not authenticated
+        if (user === null) {
+          localStorage.removeItem('learnloop_token');
+          router.push('/');
+          return;
+        }
         setUsername(user.username);
         setBio(user.bio || '');
         setOriginalData({
@@ -38,8 +44,11 @@ export default function SettingsPage() {
         });
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load user data');
-        // If auth fails, redirect to home
-        if (err instanceof Error && err.message.includes('Authentication required')) {
+        // Use error.code for programmatic error handling
+        if (
+          (err instanceof ApiError && (err.code === 'NO_TOKEN' || err.code === 'FETCH_ERROR')) ||
+          (err instanceof Error && err.message.includes('Authentication required'))
+        ) {
           localStorage.removeItem('learnloop_token');
           router.push('/');
         }
