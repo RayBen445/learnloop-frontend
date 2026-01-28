@@ -1,7 +1,7 @@
 import { getHomeFeed } from './lib/api';
 import PostCard from './components/PostCard';
 import Pagination from './components/Pagination';
-import RegisterCTA from './components/RegisterCTA';
+import Hero from './components/Hero';
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -46,18 +46,10 @@ export default async function Home({ searchParams }: HomePageProps) {
 
   return (
     <div className="min-h-screen bg-dark-bg">
-      <div className="max-w-3xl mx-auto px-6 py-12">
-        {/* Header */}
-        <header className="mb-12">
-          <h1 className="text-3xl font-bold mb-3 text-gradient-primary">
-            Welcome to LearnLoop
-          </h1>
-          <p className="text-base text-luxury-gray-400">Learn, share, and grow together</p>
-        </header>
+      {/* Hero Section with animated logo */}
+      <Hero />
 
-        {/* Register CTA for unauthenticated users */}
-        <RegisterCTA />
-
+      <div className="max-w-3xl mx-auto px-6 pb-12">
         {/* Error State */}
         {error && (
           <div className="border-l-4 border-red-500 bg-red-950 bg-opacity-20 pl-4 py-3 mb-8 rounded">
