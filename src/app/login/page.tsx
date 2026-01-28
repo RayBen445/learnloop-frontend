@@ -3,7 +3,7 @@
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { login } from '../lib/api';
+import { login, ApiError } from '../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
 import LoadingState from '../../components/LoadingState';
 import ResendVerificationButton from '../components/ResendVerificationButton';
@@ -31,18 +31,18 @@ export default function LoginPage() {
       // Redirect to home on success
       router.push('/');
     } catch (err) {
-      // Better error messages
-      const errorMessage = err instanceof Error ? err.message : 'Login failed';
-      
-      // Provide more helpful error messages
-      if (errorMessage.includes('401') || errorMessage.includes('Unauthorized')) {
-        setError('Incorrect email or password. Please try again.');
-      } else if (errorMessage.toLowerCase().includes('verify') || errorMessage.toLowerCase().includes('verification') || errorMessage.toLowerCase().includes('not verified')) {
-        setError('Please verify your email address before logging in. Check your inbox for the verification link.');
-        setIsUnverified(true);
-      } else if (errorMessage.includes('network') || errorMessage.includes('fetch')) {
-        setError('Network error. Please check your connection and try again.');
+      // Use error.code for programmatic handling and error.message for display
+      if (err instanceof ApiError) {
+        // Check error code for programmatic error handling
+        if (err.code === 'EMAIL_NOT_VERIFIED' || err.message.toLowerCase().includes('verify') || err.message.toLowerCase().includes('not verified')) {
+          setError(err.message);
+          setIsUnverified(true);
+        } else {
+          setError(err.message);
+        }
       } else {
+        // Fallback for non-ApiError instances
+        const errorMessage = err instanceof Error ? err.message : 'Login failed';
         setError(errorMessage);
       }
     } finally {
