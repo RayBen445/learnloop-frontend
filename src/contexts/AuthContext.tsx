@@ -57,10 +57,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = () => {
+    setLoading(true);
     if (typeof window !== 'undefined') {
       localStorage.removeItem('learnloop_token');
     }
     setUser(null);
+    setLoading(false);
   };
 
   const refreshUser = async () => {
