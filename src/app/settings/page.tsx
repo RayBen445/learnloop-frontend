@@ -30,6 +30,12 @@ export default function SettingsPage() {
     const loadUser = async () => {
       try {
         const user = await getCurrentUser();
+        // Handle new response format: { user: null } means not authenticated
+        if (user === null) {
+          localStorage.removeItem('learnloop_token');
+          router.push('/');
+          return;
+        }
         setUsername(user.username);
         setBio(user.bio || '');
         setOriginalData({

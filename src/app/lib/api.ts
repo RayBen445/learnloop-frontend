@@ -18,6 +18,17 @@ function getApiBaseUrl(): string {
   return apiUrl;
 }
 
+// API Error type for consistent error handling
+export class ApiError extends Error {
+  code: string;
+  
+  constructor(message: string, code: string = 'UNKNOWN_ERROR') {
+    super(message);
+    this.name = 'ApiError';
+    this.code = code;
+  }
+}
+
 // Types
 export interface Post {
   id: number;
@@ -204,8 +215,8 @@ export async function register(data: RegisterData): Promise<AuthResponse> {
   );
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ detail: 'Registration failed' }));
-    throw new Error(error.detail || 'Registration failed');
+    const error = await response.json().catch(() => ({ detail: 'Registration failed', code: 'REGISTRATION_ERROR' }));
+    throw new ApiError(error.detail || 'Registration failed', error.code || 'REGISTRATION_ERROR');
   }
 
   return response.json();
@@ -224,8 +235,8 @@ export async function login(data: LoginData): Promise<AuthResponse> {
   );
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ detail: 'Login failed' }));
-    throw new Error(error.detail || 'Login failed');
+    const error = await response.json().catch(() => ({ detail: 'Login failed', code: 'LOGIN_ERROR' }));
+    throw new ApiError(error.detail || 'Login failed', error.code || 'LOGIN_ERROR');
   }
 
   return response.json();
@@ -237,7 +248,7 @@ export async function createPost(data: CreatePostData): Promise<Post> {
   const token = typeof window !== 'undefined' ? localStorage.getItem('learnloop_token') : null;
   
   if (!token) {
-    throw new Error('Authentication required. Please login first.');
+    throw new ApiError('Authentication required. Please login first.', 'NO_TOKEN');
   }
 
   const response = await fetch(
@@ -253,8 +264,8 @@ export async function createPost(data: CreatePostData): Promise<Post> {
   );
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ detail: 'Failed to create post' }));
-    throw new Error(error.detail || 'Failed to create post');
+    const error = await response.json().catch(() => ({ detail: 'Failed to create post', code: 'CREATE_POST_ERROR' }));
+    throw new ApiError(error.detail || 'Failed to create post', error.code || 'CREATE_POST_ERROR');
   }
 
   return response.json();
@@ -266,7 +277,7 @@ export async function createComment(data: CreateCommentData): Promise<Comment> {
   const token = typeof window !== 'undefined' ? localStorage.getItem('learnloop_token') : null;
   
   if (!token) {
-    throw new Error('Authentication required. Please login first.');
+    throw new ApiError('Authentication required. Please login first.', 'NO_TOKEN');
   }
 
   const response = await fetch(
@@ -282,8 +293,8 @@ export async function createComment(data: CreateCommentData): Promise<Comment> {
   );
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ detail: 'Failed to create comment' }));
-    throw new Error(error.detail || 'Failed to create comment');
+    const error = await response.json().catch(() => ({ detail: 'Failed to create comment', code: 'CREATE_COMMENT_ERROR' }));
+    throw new ApiError(error.detail || 'Failed to create comment', error.code || 'CREATE_COMMENT_ERROR');
   }
 
   return response.json();
@@ -294,7 +305,7 @@ export async function createVote(data: CreateVoteData): Promise<Vote> {
   const token = typeof window !== 'undefined' ? localStorage.getItem('learnloop_token') : null;
   
   if (!token) {
-    throw new Error('Authentication required. Please login first.');
+    throw new ApiError('Authentication required. Please login first.', 'NO_TOKEN');
   }
 
   const response = await fetch(
@@ -310,8 +321,8 @@ export async function createVote(data: CreateVoteData): Promise<Vote> {
   );
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ detail: 'Failed to create vote' }));
-    throw new Error(error.detail || 'Failed to create vote');
+    const error = await response.json().catch(() => ({ detail: 'Failed to create vote', code: 'CREATE_VOTE_ERROR' }));
+    throw new ApiError(error.detail || 'Failed to create vote', error.code || 'CREATE_VOTE_ERROR');
   }
 
   return response.json();
@@ -321,7 +332,7 @@ export async function deleteVote(voteId: number): Promise<void> {
   const token = typeof window !== 'undefined' ? localStorage.getItem('learnloop_token') : null;
   
   if (!token) {
-    throw new Error('Authentication required. Please login first.');
+    throw new ApiError('Authentication required. Please login first.', 'NO_TOKEN');
   }
 
   const response = await fetch(
@@ -335,8 +346,8 @@ export async function deleteVote(voteId: number): Promise<void> {
   );
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ detail: 'Failed to delete vote' }));
-    throw new Error(error.detail || 'Failed to delete vote');
+    const error = await response.json().catch(() => ({ detail: 'Failed to delete vote', code: 'DELETE_VOTE_ERROR' }));
+    throw new ApiError(error.detail || 'Failed to delete vote', error.code || 'DELETE_VOTE_ERROR');
   }
 }
 
@@ -422,11 +433,11 @@ export async function getUserPosts(authorId: string, page: number = 1, pageSize:
 }
 
 // Current user API functions (authenticated)
-export async function getCurrentUser(): Promise<User> {
+export async function getCurrentUser(): Promise<User | null> {
   const token = typeof window !== 'undefined' ? localStorage.getItem('learnloop_token') : null;
   
   if (!token) {
-    throw new Error('Authentication required. Please login first.');
+    throw new ApiError('Authentication required. Please login first.', 'NO_TOKEN');
   }
 
   const response = await fetch(
@@ -440,17 +451,26 @@ export async function getCurrentUser(): Promise<User> {
   );
 
   if (!response.ok) {
-    throw new Error('Failed to fetch user data');
+    const error = await response.json().catch(() => ({ detail: 'Failed to fetch user data', code: 'FETCH_ERROR' }));
+    throw new ApiError(error.detail || 'Failed to fetch user data', error.code || 'FETCH_ERROR');
   }
 
-  return response.json();
+  const data = await response.json();
+  
+  // Handle new response format: { user: null } or { user: User }
+  if (data && typeof data === 'object' && 'user' in data) {
+    return data.user;
+  }
+  
+  // Fallback for direct User object response (backward compatibility)
+  return data;
 }
 
 export async function updateUser(data: UpdateUserData): Promise<User> {
   const token = typeof window !== 'undefined' ? localStorage.getItem('learnloop_token') : null;
   
   if (!token) {
-    throw new Error('Authentication required. Please login first.');
+    throw new ApiError('Authentication required. Please login first.', 'NO_TOKEN');
   }
 
   const response = await fetch(
@@ -466,8 +486,8 @@ export async function updateUser(data: UpdateUserData): Promise<User> {
   );
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ detail: 'Failed to update user' }));
-    throw new Error(error.detail || 'Failed to update user');
+    const error = await response.json().catch(() => ({ detail: 'Failed to update user', code: 'UPDATE_USER_ERROR' }));
+    throw new ApiError(error.detail || 'Failed to update user', error.code || 'UPDATE_USER_ERROR');
   }
 
   return response.json();
@@ -483,8 +503,8 @@ export async function verifyEmail(token: string): Promise<{ message: string }> {
   );
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ detail: 'Verification failed' }));
-    throw new Error(error.detail || 'Verification failed');
+    const error = await response.json().catch(() => ({ detail: 'Verification failed', code: 'VERIFY_EMAIL_ERROR' }));
+    throw new ApiError(error.detail || 'Verification failed', error.code || 'VERIFY_EMAIL_ERROR');
   }
 
   return response.json();
@@ -516,8 +536,8 @@ export async function resendVerificationEmail(email?: string): Promise<{ message
   );
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ detail: 'Failed to resend verification email' }));
-    throw new Error(error.detail || 'Failed to resend verification email');
+    const error = await response.json().catch(() => ({ detail: 'Failed to resend verification email', code: 'RESEND_VERIFICATION_ERROR' }));
+    throw new ApiError(error.detail || 'Failed to resend verification email', error.code || 'RESEND_VERIFICATION_ERROR');
   }
 
   return response.json();

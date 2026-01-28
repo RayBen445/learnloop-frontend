@@ -37,7 +37,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (token) {
       try {
         const userData = await getCurrentUser();
-        setUser(userData);
+        // Handle new response format: { user: null } means not authenticated
+        if (userData === null) {
+          localStorage.removeItem('learnloop_token');
+          setUser(null);
+        } else {
+          setUser(userData);
+        }
       } catch (error) {
         // Token is invalid or expired, clear it
         localStorage.removeItem('learnloop_token');
