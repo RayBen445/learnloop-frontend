@@ -99,7 +99,13 @@ export interface User {
   id: number;
   username: string;
   email: string;
+  bio?: string;
   created_at: string;
+}
+
+export interface UpdateUserData {
+  username?: string;
+  bio?: string;
 }
 
 // Helper function to create excerpt from content
@@ -396,4 +402,56 @@ export async function getUserPosts(authorId: string, page: number = 1, pageSize:
   }));
 
   return { ...data, posts };
+}
+
+// Current user API functions (authenticated)
+export async function getCurrentUser(): Promise<User> {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('learnloop_token') : null;
+  
+  if (!token) {
+    throw new Error('Authentication required. Please login first.');
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/api/me`,
+    {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      cache: 'no-store'
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch user data');
+  }
+
+  return response.json();
+}
+
+export async function updateUser(data: UpdateUserData): Promise<User> {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('learnloop_token') : null;
+  
+  if (!token) {
+    throw new Error('Authentication required. Please login first.');
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/api/me`,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ detail: 'Failed to update user' }));
+    throw new Error(error.detail || 'Failed to update user');
+  }
+
+  return response.json();
 }

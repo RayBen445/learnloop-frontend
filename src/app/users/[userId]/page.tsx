@@ -1,5 +1,5 @@
-import { getUser, getUserPosts } from '@/app/lib/api';
-import PostCard from '@/app/components/PostCard';
+import { getUser, getUserPosts } from '../../lib/api';
+import PostCard from '../../components/PostCard';
 import Link from 'next/link';
 
 interface PageProps {
