@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { login } from '../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
 import LoadingState from '../../components/LoadingState';
+import ResendVerificationButton from '../components/ResendVerificationButton';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -15,11 +16,13 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isUnverified, setIsUnverified] = useState(false);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
+    setIsUnverified(false);
 
     try {
       const response = await login({ email, password });
@@ -34,8 +37,9 @@ export default function LoginPage() {
       // Provide more helpful error messages
       if (errorMessage.includes('401') || errorMessage.includes('Unauthorized')) {
         setError('Incorrect email or password. Please try again.');
-      } else if (errorMessage.includes('verify') || errorMessage.includes('verification')) {
+      } else if (errorMessage.toLowerCase().includes('verify') || errorMessage.toLowerCase().includes('verification') || errorMessage.toLowerCase().includes('not verified')) {
         setError('Please verify your email address before logging in. Check your inbox for the verification link.');
+        setIsUnverified(true);
       } else if (errorMessage.includes('network') || errorMessage.includes('fetch')) {
         setError('Network error. Please check your connection and try again.');
       } else {
@@ -59,8 +63,20 @@ export default function LoginPage() {
         <div className="bg-dark-surface border border-dark-border rounded-2xl p-8 shadow-xl">
           <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
-              <div className="border-l-4 border-red-500 bg-red-950 bg-opacity-20 pl-4 py-3 rounded">
-                <p className="text-sm text-red-400">{error}</p>
+              <div className="space-y-3">
+                <div className={`border-l-4 pl-4 py-3 rounded ${
+                  isUnverified 
+                    ? 'border-amber-500 bg-amber-950 bg-opacity-20' 
+                    : 'border-red-500 bg-red-950 bg-opacity-20'
+                }`}>
+                  <p className={`text-sm ${isUnverified ? 'text-amber-400' : 'text-red-400'}`}>
+                    {error}
+                  </p>
+                </div>
+                
+                {isUnverified && (
+                  <ResendVerificationButton email={email} />
+                )}
               </div>
             )}
 
