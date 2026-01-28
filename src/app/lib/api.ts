@@ -1,6 +1,22 @@
 // API utility functions for LearnLoop
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+/**
+ * Validates and returns the API base URL
+ * Fails loudly if NEXT_PUBLIC_API_URL is not configured
+ * This is called on each API request to support runtime configuration
+ */
+function getApiBaseUrl(): string {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  
+  if (!apiUrl) {
+    throw new Error(
+      'NEXT_PUBLIC_API_URL environment variable is not configured. ' +
+      'Please set it in your .env.local file or environment variables.'
+    );
+  }
+  
+  return apiUrl;
+}
 
 // Types
 export interface Post {
@@ -120,7 +136,7 @@ export function createExcerpt(content: string, wordLimit: number = 40): string {
 // API functions
 export async function getHomeFeed(page: number = 1, pageSize: number = 10): Promise<FeedResponse> {
   const response = await fetch(
-    `${API_BASE_URL}/api/feed/home?page=${page}&page_size=${pageSize}`,
+    `${getApiBaseUrl()}/api/feed/home?page=${page}&page_size=${pageSize}`,
     { cache: 'no-store' }
   );
 
@@ -141,7 +157,7 @@ export async function getHomeFeed(page: number = 1, pageSize: number = 10): Prom
 
 export async function getTopicFeed(topicId: string, page: number = 1, pageSize: number = 10): Promise<FeedResponse> {
   const response = await fetch(
-    `${API_BASE_URL}/api/feed/topic/${topicId}?page=${page}&page_size=${pageSize}`,
+    `${getApiBaseUrl()}/api/feed/topic/${topicId}?page=${page}&page_size=${pageSize}`,
     { cache: 'no-store' }
   );
 
@@ -162,7 +178,7 @@ export async function getTopicFeed(topicId: string, page: number = 1, pageSize: 
 
 export async function getPost(postId: string): Promise<PostDetail> {
   const response = await fetch(
-    `${API_BASE_URL}/api/posts/${postId}`,
+    `${getApiBaseUrl()}/api/posts/${postId}`,
     { cache: 'no-store' }
   );
 
@@ -176,7 +192,7 @@ export async function getPost(postId: string): Promise<PostDetail> {
 // Auth API functions
 export async function register(data: RegisterData): Promise<AuthResponse> {
   const response = await fetch(
-    `${API_BASE_URL}/api/auth/register`,
+    `${getApiBaseUrl()}/api/auth/register`,
     {
       method: 'POST',
       headers: {
@@ -196,7 +212,7 @@ export async function register(data: RegisterData): Promise<AuthResponse> {
 
 export async function login(data: LoginData): Promise<AuthResponse> {
   const response = await fetch(
-    `${API_BASE_URL}/api/auth/login`,
+    `${getApiBaseUrl()}/api/auth/login`,
     {
       method: 'POST',
       headers: {
@@ -224,7 +240,7 @@ export async function createPost(data: CreatePostData): Promise<Post> {
   }
 
   const response = await fetch(
-    `${API_BASE_URL}/api/posts`,
+    `${getApiBaseUrl()}/api/posts`,
     {
       method: 'POST',
       headers: {
@@ -253,7 +269,7 @@ export async function createComment(data: CreateCommentData): Promise<Comment> {
   }
 
   const response = await fetch(
-    `${API_BASE_URL}/api/comments`,
+    `${getApiBaseUrl()}/api/comments`,
     {
       method: 'POST',
       headers: {
@@ -281,7 +297,7 @@ export async function createVote(data: CreateVoteData): Promise<Vote> {
   }
 
   const response = await fetch(
-    `${API_BASE_URL}/api/votes`,
+    `${getApiBaseUrl()}/api/votes`,
     {
       method: 'POST',
       headers: {
@@ -308,7 +324,7 @@ export async function deleteVote(voteId: number): Promise<void> {
   }
 
   const response = await fetch(
-    `${API_BASE_URL}/api/votes/${voteId}`,
+    `${getApiBaseUrl()}/api/votes/${voteId}`,
     {
       method: 'DELETE',
       headers: {
@@ -332,7 +348,7 @@ export async function getPostVotes(postId: number): Promise<VoteStatus> {
   }
 
   const response = await fetch(
-    `${API_BASE_URL}/api/votes/posts/${postId}`,
+    `${getApiBaseUrl()}/api/votes/posts/${postId}`,
     { 
       headers,
       cache: 'no-store'
@@ -355,7 +371,7 @@ export async function getCommentVotes(commentId: number): Promise<VoteStatus> {
   }
 
   const response = await fetch(
-    `${API_BASE_URL}/api/votes/comments/${commentId}`,
+    `${getApiBaseUrl()}/api/votes/comments/${commentId}`,
     { 
       headers,
       cache: 'no-store'
@@ -372,7 +388,7 @@ export async function getCommentVotes(commentId: number): Promise<VoteStatus> {
 // User API functions
 export async function getUser(userId: string): Promise<User> {
   const response = await fetch(
-    `${API_BASE_URL}/api/users/${userId}`,
+    `${getApiBaseUrl()}/api/users/${userId}`,
     { cache: 'no-store' }
   );
 
@@ -385,7 +401,7 @@ export async function getUser(userId: string): Promise<User> {
 
 export async function getUserPosts(authorId: string, page: number = 1, pageSize: number = 10): Promise<FeedResponse> {
   const response = await fetch(
-    `${API_BASE_URL}/api/posts/author/${authorId}?page=${page}&page_size=${pageSize}`,
+    `${getApiBaseUrl()}/api/posts/author/${authorId}?page=${page}&page_size=${pageSize}`,
     { cache: 'no-store' }
   );
 
@@ -413,7 +429,7 @@ export async function getCurrentUser(): Promise<User> {
   }
 
   const response = await fetch(
-    `${API_BASE_URL}/api/me`,
+    `${getApiBaseUrl()}/api/me`,
     {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -437,7 +453,7 @@ export async function updateUser(data: UpdateUserData): Promise<User> {
   }
 
   const response = await fetch(
-    `${API_BASE_URL}/api/me`,
+    `${getApiBaseUrl()}/api/me`,
     {
       method: 'PUT',
       headers: {
