@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import Logo from "./components/Logo";
+import Navbar from "../components/Navbar";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -22,13 +21,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased" style={{ fontFamily: 'var(--font-primary)', backgroundColor: 'var(--color-luxury-white)', color: 'var(--color-luxury-black)' }}>
         {/* Global Navigation */}
-        <nav className="border-b" style={{ borderColor: 'var(--color-luxury-gray-200)', backgroundColor: 'var(--color-luxury-white)' }}>
-          <div className="max-w-4xl mx-auto px-6 py-4">
-            <Link href="/" className="inline-block transition-opacity hover:opacity-70">
-              <Logo size="md" />
-            </Link>
-          </div>
-        </nav>
+        <Navbar />
         {children}
       </body>
     </html>
