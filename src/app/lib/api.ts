@@ -491,20 +491,27 @@ export async function verifyEmail(token: string): Promise<{ message: string }> {
 }
 
 // Resend verification email
-export async function resendVerificationEmail(): Promise<{ message: string }> {
+export async function resendVerificationEmail(email?: string): Promise<{ message: string }> {
   const token = typeof window !== 'undefined' ? localStorage.getItem('learnloop_token') : null;
   
-  if (!token) {
-    throw new Error('Authentication required. Please login first.');
+  const headers: HeadersInit = {};
+  const body: any = {};
+  
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  
+  if (email) {
+    headers['Content-Type'] = 'application/json';
+    body.email = email;
   }
 
   const response = await fetch(
     `${getApiBaseUrl()}/api/auth/resend-verification`,
     {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
+      headers,
+      ...(email ? { body: JSON.stringify(body) } : {}),
     }
   );
 
