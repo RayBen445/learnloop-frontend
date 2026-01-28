@@ -49,6 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const login = async (token: string) => {
+    setLoading(true);
     if (typeof window !== 'undefined') {
       localStorage.setItem('learnloop_token', token);
     }
@@ -63,6 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const refreshUser = async () => {
+    setLoading(true);
     await checkAuth();
   };
 
