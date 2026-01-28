@@ -4,9 +4,11 @@ import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { login } from '../lib/api';
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login: authLogin } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -19,8 +21,8 @@ export default function LoginPage() {
 
     try {
       const response = await login({ email, password });
-      // Store JWT in localStorage
-      localStorage.setItem('learnloop_token', response.access_token);
+      // Update auth context with the token
+      await authLogin(response.access_token);
       // Redirect to home on success
       router.push('/');
     } catch (err) {

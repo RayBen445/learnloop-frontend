@@ -4,9 +4,11 @@ import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { register } from '../lib/api';
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { login: authLogin } = useAuth();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,9 +21,11 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      await register({ username, email, password });
-      // Redirect to login on success
-      router.push('/login');
+      const response = await register({ username, email, password });
+      // Update auth context with the token
+      await authLogin(response.access_token);
+      // Redirect to home on success
+      router.push('/');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed');
     } finally {

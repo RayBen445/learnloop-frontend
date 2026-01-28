@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Navbar from "../components/Navbar";
+import { AuthProvider } from "../contexts/AuthContext";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -20,9 +21,11 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
       </head>
       <body className="antialiased" style={{ fontFamily: 'var(--font-primary)', backgroundColor: 'var(--color-luxury-white)', color: 'var(--color-luxury-black)' }}>
-        {/* Global Navigation */}
-        <Navbar />
-        {children}
+        <AuthProvider>
+          {/* Global Navigation */}
+          <Navbar />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );
