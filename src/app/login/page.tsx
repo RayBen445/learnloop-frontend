@@ -33,8 +33,11 @@ export default function LoginPage() {
     } catch (err) {
       // Use error.code for programmatic handling and error.message for display
       if (err instanceof ApiError) {
-        // Check error code for programmatic error handling
-        if (err.code === 'EMAIL_NOT_VERIFIED' || err.message.toLowerCase().includes('verify') || err.message.toLowerCase().includes('not verified')) {
+        // Check for email verification errors (by code or message content)
+        // Using message content as fallback for backward compatibility
+        if (err.code === 'EMAIL_NOT_VERIFIED' || 
+            err.message.toLowerCase().includes('verify') || 
+            err.message.toLowerCase().includes('not verified')) {
           setError(err.message);
           setIsUnverified(true);
         } else {

@@ -45,11 +45,10 @@ export default function SettingsPage() {
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load user data');
         // Use error.code for programmatic error handling
-        if (err instanceof ApiError && (err.code === 'NO_TOKEN' || err.code === 'FETCH_ERROR')) {
-          localStorage.removeItem('learnloop_token');
-          router.push('/');
-        } else if (err instanceof Error && err.message.includes('Authentication required')) {
-          // Fallback for non-ApiError instances
+        if (
+          (err instanceof ApiError && (err.code === 'NO_TOKEN' || err.code === 'FETCH_ERROR')) ||
+          (err instanceof Error && err.message.includes('Authentication required'))
+        ) {
           localStorage.removeItem('learnloop_token');
           router.push('/');
         }
