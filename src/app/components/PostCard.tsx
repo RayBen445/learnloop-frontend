@@ -16,7 +16,12 @@ export default function PostCard({ post }: PostCardProps) {
       </Link>
       
       <div className="flex items-center gap-2 text-xs text-gray-600 mb-3">
-        <span>{post.author.username}</span>
+        <Link 
+          href={`/users/${post.author.id}`}
+          className="hover:underline"
+        >
+          {post.author.username}
+        </Link>
         <span>·</span>
         <Link 
           href={`/topics/${post.topic.id}`}

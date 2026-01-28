@@ -59,7 +59,12 @@ export default async function PostPage({ params }: PostPageProps) {
               <h1 className="text-2xl font-semibold text-gray-900 mb-4">{post.title}</h1>
               
               <div className="flex items-center gap-2 text-xs text-gray-600 mb-6 pb-6 border-b border-gray-200">
-                <span>{post.author.username}</span>
+                <Link 
+                  href={`/users/${post.author.id}`}
+                  className="hover:underline"
+                >
+                  {post.author.username}
+                </Link>
                 <span>·</span>
                 <Link 
                   href={`/topics/${post.topic.id}`}

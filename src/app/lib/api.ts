@@ -95,6 +95,13 @@ export interface VoteStatus {
   user_vote_id?: number;
 }
 
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  created_at: string;
+}
+
 // Helper function to create excerpt from content
 export function createExcerpt(content: string, wordLimit: number = 40): string {
   const words = content.split(/\s+/);
@@ -354,4 +361,39 @@ export async function getCommentVotes(commentId: number): Promise<VoteStatus> {
   }
 
   return response.json();
+}
+
+// User API functions
+export async function getUser(userId: string): Promise<User> {
+  const response = await fetch(
+    `${API_BASE_URL}/api/users/${userId}`,
+    { cache: 'no-store' }
+  );
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch user');
+  }
+
+  return response.json();
+}
+
+export async function getUserPosts(authorId: string, page: number = 1, pageSize: number = 10): Promise<FeedResponse> {
+  const response = await fetch(
+    `${API_BASE_URL}/api/posts/author/${authorId}?page=${page}&page_size=${pageSize}`,
+    { cache: 'no-store' }
+  );
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch user posts');
+  }
+
+  const data = await response.json();
+  
+  // Process posts to ensure they have excerpts
+  const posts = data.posts.map((post: Post) => ({
+    ...post,
+    excerpt: post.excerpt || createExcerpt(post.content)
+  }));
+
+  return { ...data, posts };
 }
