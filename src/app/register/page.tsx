@@ -156,6 +156,25 @@ export default function RegisterPage() {
             >
               {loading ? 'Creating account...' : 'Create account'}
             </button>
+
+            {/* Legal Agreement */}
+            <p className="text-xs text-center text-luxury-gray-400 leading-relaxed">
+              By creating an account, you agree to our{' '}
+              <Link 
+                href="/terms" 
+                className="text-accent-emerald hover:text-accent-teal transition-colors underline"
+              >
+                Terms of Service
+              </Link>
+              {' '}and{' '}
+              <Link 
+                href="/privacy" 
+                className="text-accent-emerald hover:text-accent-teal transition-colors underline"
+              >
+                Privacy Policy
+              </Link>
+              .
+            </p>
           </form>
 
           <div className="mt-8 text-center">

@@ -11,24 +11,30 @@ export default function Footer() {
           </div>
           
           {/* Links */}
-          <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6">
+          <div className="flex flex-wrap items-center justify-center gap-3 md:gap-5">
+            <Link 
+              href="/guidelines" 
+              className="text-sm text-luxury-gray-400 hover:text-luxury-white transition-colors"
+            >
+              Community Guidelines
+            </Link>
             <Link 
               href="/terms" 
               className="text-sm text-luxury-gray-400 hover:text-luxury-white transition-colors"
             >
-              Terms of Service
+              Terms
             </Link>
             <Link 
               href="/privacy" 
               className="text-sm text-luxury-gray-400 hover:text-luxury-white transition-colors"
             >
-              Privacy Policy
+              Privacy
             </Link>
             <Link 
               href="/cookies" 
               className="text-sm text-luxury-gray-400 hover:text-luxury-white transition-colors"
             >
-              Cookie Policy
+              Cookies
             </Link>
             <a 
               href="mailto:legal@learnloop.com" 
