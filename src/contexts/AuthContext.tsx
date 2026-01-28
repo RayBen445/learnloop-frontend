@@ -6,6 +6,7 @@ import { getCurrentUser, User } from '../app/lib/api';
 interface AuthContextType {
   user: User | null;
   loading: boolean;
+  mounted: boolean;
   login: (token: string) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
@@ -16,14 +17,22 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
-  // Check auth status on mount
+  // Hydration guard: only access localStorage after component mounts
   useEffect(() => {
+    setMounted(true);
     checkAuth();
   }, []);
 
   const checkAuth = async () => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('learnloop_token') : null;
+    // Only check auth on client-side after mount
+    if (typeof window === 'undefined') {
+      setLoading(false);
+      return;
+    }
+
+    const token = localStorage.getItem('learnloop_token');
     
     if (token) {
       try {
@@ -40,12 +49,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const login = async (token: string) => {
-    localStorage.setItem('learnloop_token', token);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('learnloop_token', token);
+    }
     await checkAuth();
   };
 
   const logout = () => {
-    localStorage.removeItem('learnloop_token');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('learnloop_token');
+    }
     setUser(null);
   };
 
@@ -54,7 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, refreshUser }}>
+    <AuthContext.Provider value={{ user, loading, mounted, login, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );

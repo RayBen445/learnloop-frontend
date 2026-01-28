@@ -1,6 +1,7 @@
 import { getHomeFeed } from './lib/api';
 import PostCard from './components/PostCard';
 import Pagination from './components/Pagination';
+import RegisterCTA from './components/RegisterCTA';
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -50,6 +51,9 @@ export default async function Home({ searchParams }: HomePageProps) {
         <header className="mb-12">
           <p className="text-sm text-gray-600">Learn, share, and grow together</p>
         </header>
+
+        {/* Register CTA for unauthenticated users */}
+        <RegisterCTA />
 
         {/* Error State */}
         {error && (

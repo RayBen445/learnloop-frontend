@@ -7,10 +7,11 @@ import LogoSymbol from './LogoSymbol';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function Navbar() {
-  const { user, logout } = useAuth();
+  const { user, mounted } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const { logout } = useAuth();
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -31,6 +32,44 @@ export default function Navbar() {
     setIsMenuOpen(false);
     router.push('/');
   };
+
+  // Prevent hydration mismatch by not rendering auth-dependent content until mounted
+  if (!mounted) {
+    return (
+      <nav 
+        className="border-b" 
+        style={{ 
+          borderColor: 'var(--color-luxury-gray-200)', 
+          backgroundColor: 'var(--color-luxury-white)' 
+        }}
+      >
+        <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
+          {/* Left: Logo */}
+          <Link 
+            href="/" 
+            className="inline-flex items-center gap-3 transition-opacity hover:opacity-70"
+          >
+            <div style={{ color: 'var(--color-luxury-black)' }}>
+              <LogoSymbol size={28} />
+            </div>
+            
+            <span 
+              className="text-lg font-medium tracking-tight"
+              style={{ 
+                fontFamily: 'var(--font-primary)',
+                color: 'var(--color-luxury-black)' 
+              }}
+            >
+              LearnLoop
+            </span>
+          </Link>
+          
+          {/* Right: Empty space during hydration */}
+          <div className="w-32"></div>
+        </div>
+      </nav>
+    );
+  }
 
   return (
     <nav 
@@ -63,28 +102,28 @@ export default function Navbar() {
 
         {/* Right: Navigation */}
         {user ? (
-          // Logged in: Show navigation menu with user dropdown
+          // Logged in: Show Create, Settings, and user dropdown with Logout
           <div className="flex items-center gap-6">
             <Link
-              href="/"
+              href="/create"
               className="text-sm font-medium tracking-tight transition-opacity hover:opacity-70"
               style={{ 
                 fontFamily: 'var(--font-primary)',
                 color: 'var(--color-luxury-black)'
               }}
             >
-              Home
+              Create
             </Link>
             
             <Link
-              href="/topics"
+              href="/settings"
               className="text-sm font-medium tracking-tight transition-opacity hover:opacity-70"
               style={{ 
                 fontFamily: 'var(--font-primary)',
                 color: 'var(--color-luxury-black)'
               }}
             >
-              Topics
+              Settings
             </Link>
 
             <div className="relative" ref={menuRef}>
@@ -122,19 +161,6 @@ export default function Navbar() {
                     Profile
                   </Link>
                   
-                  <Link
-                    href="/settings"
-                    className="block px-4 py-2 text-sm transition-opacity hover:opacity-70"
-                    style={{ 
-                      fontFamily: 'var(--font-primary)',
-                      color: 'var(--color-luxury-black)',
-                      backgroundColor: 'transparent'
-                    }}
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Settings
-                  </Link>
-                  
                   <div 
                     className="border-t" 
                     style={{ borderColor: 'var(--color-luxury-gray-200)' }}
@@ -149,14 +175,14 @@ export default function Navbar() {
                       backgroundColor: 'transparent'
                     }}
                   >
-                    Log out
+                    Logout
                   </button>
                 </div>
               )}
             </div>
           </div>
         ) : (
-          // Logged out: Show login and register links
+          // Logged out: Show Login and Register links
           <div className="flex items-center gap-4">
             <Link
               href="/login"
