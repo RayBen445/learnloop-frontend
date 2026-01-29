@@ -28,8 +28,8 @@ export default function LoginPage() {
       const response = await login({ email, password });
       // Update auth context with the token
       await authLogin(response.access_token);
-      // Redirect to home on success
-      router.push('/');
+      // Redirect to home feed on success
+      router.push('/home');
     } catch (err) {
       // Use error.code for programmatic handling and error.message for display
       if (err instanceof ApiError) {
