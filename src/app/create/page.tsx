@@ -25,13 +25,6 @@ export default function CreatePostPage() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
-
-    // Check if user is verified
-    if (!user?.email_verified) {
-      setError('Please verify your email address before creating posts.');
-      return;
-    }
-
     setLoading(true);
 
     try {

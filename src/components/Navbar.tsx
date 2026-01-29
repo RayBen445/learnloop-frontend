@@ -5,17 +5,13 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import LogoSymbol from './LogoSymbol';
 import { useAuth } from '../contexts/AuthContext';
-import VerificationReminderBanner from '../app/components/VerificationReminderBanner';
-import { AnimatePresence } from 'framer-motion';
 
 export default function Navbar() {
   const { user, mounted, loading, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
 
-  // Check if user is verified
-  const isVerified = user?.email_verified ?? false;
+  const router = useRouter();
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -77,23 +73,19 @@ export default function Navbar() {
         {user ? (
           // Logged in: Show Create, Settings, and user dropdown with Logout
           <div className="flex items-center gap-6">
-            {isVerified && (
-              <>
-                <Link
-                  href="/create"
-                  className="text-sm font-medium tracking-tight text-luxury-gray-300 hover:text-luxury-white transition-colors"
-                >
-                  Create
-                </Link>
-                
-                <Link
-                  href="/settings"
-                  className="text-sm font-medium tracking-tight text-luxury-gray-300 hover:text-luxury-white transition-colors"
-                >
-                  Settings
-                </Link>
-              </>
-            )}
+            <Link
+              href="/create"
+              className="text-sm font-medium tracking-tight text-luxury-gray-300 hover:text-luxury-white transition-colors"
+            >
+              Create
+            </Link>
+            
+            <Link
+              href="/settings"
+              className="text-sm font-medium tracking-tight text-luxury-gray-300 hover:text-luxury-white transition-colors"
+            >
+              Settings
+            </Link>
 
             <div className="relative" ref={menuRef}>
               <button
@@ -110,19 +102,15 @@ export default function Navbar() {
               {/* Dropdown Menu */}
               {isMenuOpen && (
                 <div className="absolute right-0 mt-2 w-48 border border-dark-border bg-dark-surface-elevated rounded-lg shadow-xl overflow-hidden">
-                  {isVerified && (
-                    <>
-                      <Link
-                        href={`/users/${user.id}`}
-                        className="block px-4 py-3 text-sm text-luxury-gray-300 hover:text-luxury-white hover:bg-dark-surface transition-colors"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        Profile
-                      </Link>
-                      
-                      <div className="border-t border-dark-border" />
-                    </>
-                  )}
+                  <Link
+                    href={`/users/${user.id}`}
+                    className="block px-4 py-3 text-sm text-luxury-gray-300 hover:text-luxury-white hover:bg-dark-surface transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Profile
+                  </Link>
+                  
+                  <div className="border-t border-dark-border" />
                   
                   <button
                     onClick={handleLogout}
@@ -154,11 +142,6 @@ export default function Navbar() {
         )}
         </div>
       </nav>
-      
-      {/* Verification reminder banner for authenticated but unverified users */}
-      <AnimatePresence>
-        {user && !isVerified && <VerificationReminderBanner />}
-      </AnimatePresence>
     </>
   );
 }

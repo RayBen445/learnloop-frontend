@@ -3,20 +3,21 @@
 import { useState, FormEvent, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { register } from '../lib/api';
+import { register, login } from '../lib/api';
 import { validatePassword } from '../lib/passwordValidation';
 import PasswordStrengthIndicator from '../components/PasswordStrengthIndicator';
+import { useAuth } from '../../contexts/AuthContext';
+import LoadingState from '../../components/LoadingState';
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { login: authLogin } = useAuth();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const [registeredEmail, setRegisteredEmail] = useState('');
 
   // Validate password in real-time (memoized for performance)
   const passwordValidation = useMemo(() => validatePassword(password), [password]);
@@ -28,67 +29,21 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
+      // Register the user
       await register({ username, email, password });
-      // Show confirmation screen instead of auto-login
-      setRegisteredEmail(email);
-      setShowConfirmation(true);
+      
+      // Auto-login after successful registration
+      const loginResponse = await login({ email, password });
+      await authLogin(loginResponse.access_token);
+      
+      // Redirect to home feed
+      router.push('/home');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed');
     } finally {
       setLoading(false);
     }
   };
-
-  // Confirmation screen after successful registration
-  if (showConfirmation) {
-    return (
-      <div className="min-h-screen bg-dark-bg flex items-center justify-center px-6">
-        <div className="max-w-md w-full">
-          <div className="bg-dark-surface border border-dark-border rounded-2xl p-8 shadow-xl text-center">
-            {/* Success icon */}
-            <div className="mb-6 flex justify-center">
-              <div className="w-16 h-16 rounded-full bg-gradient-secondary flex items-center justify-center">
-                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-              </div>
-            </div>
-
-            <h1 className="text-2xl font-bold mb-3 text-gradient-secondary">
-              Check your email
-            </h1>
-            
-            <p className="text-base text-luxury-gray-400 mb-6">
-              We've sent a verification link to <span className="text-luxury-white font-medium">{registeredEmail}</span>
-            </p>
-
-            <p className="text-sm text-luxury-gray-500 mb-8">
-              Click the link in the email to verify your account and start learning with LearnLoop.
-            </p>
-
-            <div className="space-y-3">
-              <Link
-                href="/login"
-                className="block w-full py-3 px-4 bg-gradient-secondary text-white text-sm font-semibold rounded-lg hover:opacity-90 transition-opacity"
-              >
-                Go to Login
-              </Link>
-              
-              <p className="text-xs text-luxury-gray-500">
-                Didn't receive the email? Check your spam folder or{' '}
-                <button 
-                  className="text-accent-teal hover:text-accent-emerald transition-colors"
-                  onClick={() => setShowConfirmation(false)}
-                >
-                  try again
-                </button>
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-dark-bg flex items-center justify-center px-6">
@@ -192,7 +147,14 @@ export default function RegisterPage() {
               disabled={loading || !isPasswordValid}
               className="w-full py-3.5 px-4 bg-gradient-secondary text-white text-sm font-semibold rounded-lg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent-emerald focus:ring-offset-2 focus:ring-offset-dark-surface disabled:opacity-50 disabled:cursor-not-allowed transition-opacity shadow-lg"
             >
-              {loading ? 'Creating account...' : 'Create account'}
+              {loading ? (
+                <span className="flex items-center justify-center gap-3">
+                  <LoadingState size="sm" />
+                  <span>Creating account...</span>
+                </span>
+              ) : (
+                'Create account'
+              )}
             </button>
 
             {/* Helper text when password is invalid */}
