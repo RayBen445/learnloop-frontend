@@ -143,10 +143,33 @@ export interface ChangePasswordData {
 
 // Helper function to create excerpt from content
 export function createExcerpt(content: string, wordLimit: number = 40): string {
-  const words = content.split(/\s+/);
+  const regex = /\s+/g;
+  const words: string[] = [];
+  let lastIndex = 0;
+  let match;
+
+  // Iterate through the string to find words up to the limit
+  // This avoids splitting the entire string which can be expensive for large content
+  while ((match = regex.exec(content)) !== null) {
+    const word = content.slice(lastIndex, match.index);
+    words.push(word);
+    lastIndex = regex.lastIndex;
+
+    // Optimization: Stop once we have enough words to determine if we need an excerpt
+    if (words.length > wordLimit) {
+      break;
+    }
+  }
+
+  // If we haven't exceeded the limit yet, add the final segment
+  if (words.length <= wordLimit) {
+    words.push(content.slice(lastIndex));
+  }
+
   if (words.length <= wordLimit) {
     return content;
   }
+
   return words.slice(0, wordLimit).join(' ') + '...';
 }
 
