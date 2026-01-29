@@ -61,10 +61,16 @@ export default function VoteButton({ targetType, targetId, initialVoteCount = 0 
     }
   };
 
+  const actionLabel = userVoteId ? 'Remove vote' : 'Upvote';
+  const ariaLabel = `${actionLabel} ${targetType}. Current count: ${voteCount}`;
+
   return (
     <button
       onClick={handleVote}
       disabled={loading}
+      aria-label={ariaLabel}
+      aria-pressed={!!userVoteId}
+      title={actionLabel}
       className={`flex items-center gap-1 text-xs ${
         userVoteId 
           ? 'text-blue-700' 
@@ -72,6 +78,7 @@ export default function VoteButton({ targetType, targetId, initialVoteCount = 0 
       } disabled:opacity-50 disabled:cursor-not-allowed transition-colors`}
     >
       <svg 
+        aria-hidden="true"
         className="w-3 h-3" 
         fill={userVoteId ? "currentColor" : "none"} 
         stroke="currentColor" 
@@ -79,7 +86,7 @@ export default function VoteButton({ targetType, targetId, initialVoteCount = 0 
       >
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
       </svg>
-      <span>{voteCount}</span>
+      <span aria-hidden="true">{voteCount}</span>
     </button>
   );
 }
