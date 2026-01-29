@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, FormEvent, useMemo, useEffect } from 'react';
+import { useState, FormEvent, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { register, login } from '../lib/api';
@@ -11,7 +11,7 @@ import LoadingState from '../../components/LoadingState';
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { login: authLogin, user, mounted } = useAuth();
+  const { login: authLogin } = useAuth();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -22,13 +22,6 @@ export default function RegisterPage() {
   // Validate password in real-time (memoized for performance)
   const passwordValidation = useMemo(() => validatePassword(password), [password]);
   const isPasswordValid = passwordValidation.isValid;
-
-  // Automatically redirect when user is authenticated
-  useEffect(() => {
-    if (mounted && user) {
-      router.replace('/home');
-    }
-  }, [mounted, user, router]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -41,9 +34,13 @@ export default function RegisterPage() {
       
       // Auto-login after successful registration
       const loginResponse = await login({ email, password });
-      await authLogin(loginResponse.access_token, loginResponse.user);
+      await authLogin(loginResponse.access_token);
       
-      // No manual redirect here - useEffect will handle it once state propagates
+      // Small delay to ensure auth state is fully propagated
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Redirect to home feed using replace to avoid back button issues
+      router.replace('/home');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed');
     } finally {

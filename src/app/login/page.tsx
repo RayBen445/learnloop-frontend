@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, FormEvent, useEffect } from 'react';
+import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { login, ApiError } from '../lib/api';
@@ -9,19 +9,12 @@ import LoadingState from '../../components/LoadingState';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login: authLogin, user, mounted } = useAuth();
+  const { login: authLogin } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
-  // Automatically redirect when user is authenticated
-  useEffect(() => {
-    if (mounted && user) {
-      router.replace('/home');
-    }
-  }, [mounted, user, router]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -32,11 +25,16 @@ export default function LoginPage() {
       const response = await login({ email, password });
       console.log('Login successful, token received');
       
-      // Update auth context with the token and optimistic user data
-      await authLogin(response.access_token, response.user);
+      // Update auth context with the token
+      await authLogin(response.access_token);
       console.log('Auth context updated');
       
-      // No manual redirect here - useEffect will handle it once state propagates
+      // Small delay to ensure auth state is fully propagated
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Redirect to home feed on success using replace to avoid back button issues
+      console.log('Redirecting to /home');
+      router.replace('/home');
     } catch (err) {
       console.error('Login error:', err);
       if (err instanceof ApiError) {

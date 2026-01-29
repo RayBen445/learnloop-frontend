@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
-import { createComment, Comment } from '../../lib/api';
-import CommentItem from './CommentItem';
+import { useState, FormEvent, useEffect } from 'react';
+import { createComment, Comment, getCommentVotes } from '../../lib/api';
+import VoteButton from '../../components/VoteButton';
 
 interface CommentsSectionProps {
   postId: number;
@@ -97,7 +97,22 @@ export default function CommentsSection({ postId, initialComments }: CommentsSec
       ) : (
         <div className="space-y-6 mb-8">
           {comments.map((comment) => (
-            <CommentItem key={comment.id} comment={comment} />
+            <div key={comment.id} className="border-l-2 border-gray-200 pl-4 py-2">
+              <div className="flex items-center gap-2 text-xs text-gray-600 mb-2">
+                <span className="font-medium text-gray-900">{comment.author.username}</span>
+                <span>·</span>
+                <span>{new Date(comment.created_at).toLocaleDateString()}</span>
+                <span>·</span>
+                <VoteButton
+                  targetType="comment"
+                  targetId={comment.id}
+                  initialVoteCount={comment.vote_count || 0}
+                  initialUserVoteId={userVotes[comment.id]}
+                  disableSelfFetch={true}
+                />
+              </div>
+              <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{comment.content}</p>
+            </div>
           ))}
         </div>
       )}

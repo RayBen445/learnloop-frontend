@@ -23,18 +23,12 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
       </head>
       <body className="antialiased flex flex-col min-h-screen">
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-4 focus:left-4 focus:px-4 focus:py-2 focus:bg-white focus:text-black focus:rounded-md focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          Skip to main content
-        </a>
         <AuthProvider>
           {/* Global Navigation */}
           <Navbar />
           {/* Verification Banner for unverified users */}
           <VerificationBanner />
-          <main id="main-content" className="flex-1 scroll-mt-20">
+          <main className="flex-1">
             {children}
           </main>
           {/* Footer with Privacy Policy link */}

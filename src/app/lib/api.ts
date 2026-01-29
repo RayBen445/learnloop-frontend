@@ -143,33 +143,10 @@ export interface ChangePasswordData {
 
 // Helper function to create excerpt from content
 export function createExcerpt(content: string, wordLimit: number = 40): string {
-  const regex = /\s+/g;
-  const words: string[] = [];
-  let lastIndex = 0;
-  let match;
-
-  // Iterate through the string to find words up to the limit
-  // This avoids splitting the entire string which can be expensive for large content
-  while ((match = regex.exec(content)) !== null) {
-    const word = content.slice(lastIndex, match.index);
-    words.push(word);
-    lastIndex = regex.lastIndex;
-
-    // Optimization: Stop once we have enough words to determine if we need an excerpt
-    if (words.length > wordLimit) {
-      break;
-    }
-  }
-
-  // If we haven't exceeded the limit yet, add the final segment
-  if (words.length <= wordLimit) {
-    words.push(content.slice(lastIndex));
-  }
-
+  const words = content.split(/\s+/);
   if (words.length <= wordLimit) {
     return content;
   }
-
   return words.slice(0, wordLimit).join(' ') + '...';
 }
 
@@ -177,7 +154,7 @@ export function createExcerpt(content: string, wordLimit: number = 40): string {
 export async function getHomeFeed(page: number = 1, pageSize: number = 10): Promise<FeedResponse> {
   const response = await fetch(
     `${getApiBaseUrl()}/api/feed/home?page=${page}&page_size=${pageSize}`,
-    { next: { revalidate: 60 } }
+    { cache: 'no-store' }
   );
 
   if (!response.ok) {
@@ -198,7 +175,7 @@ export async function getHomeFeed(page: number = 1, pageSize: number = 10): Prom
 export async function getTopicFeed(topicId: string, page: number = 1, pageSize: number = 10): Promise<FeedResponse> {
   const response = await fetch(
     `${getApiBaseUrl()}/api/feed/topic/${topicId}?page=${page}&page_size=${pageSize}`,
-    { next: { revalidate: 60 } }
+    { cache: 'no-store' }
   );
 
   if (!response.ok) {
@@ -219,7 +196,7 @@ export async function getTopicFeed(topicId: string, page: number = 1, pageSize: 
 export async function getPost(postId: string): Promise<PostDetail> {
   const response = await fetch(
     `${getApiBaseUrl()}/api/posts/${postId}`,
-    { next: { revalidate: 60 } }
+    { cache: 'no-store' }
   );
 
   if (!response.ok) {
@@ -429,7 +406,7 @@ export async function getCommentVotes(commentId: number): Promise<VoteStatus> {
 export async function getUser(userId: string): Promise<User> {
   const response = await fetch(
     `${getApiBaseUrl()}/api/users/${userId}`,
-    { next: { revalidate: 60 } }
+    { cache: 'no-store' }
   );
 
   if (!response.ok) {
@@ -442,7 +419,7 @@ export async function getUser(userId: string): Promise<User> {
 export async function getUserPosts(authorId: string, page: number = 1, pageSize: number = 10): Promise<FeedResponse> {
   const response = await fetch(
     `${getApiBaseUrl()}/api/posts/author/${authorId}?page=${page}&page_size=${pageSize}`,
-    { next: { revalidate: 60 } }
+    { cache: 'no-store' }
   );
 
   if (!response.ok) {
