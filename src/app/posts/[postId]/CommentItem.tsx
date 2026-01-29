@@ -6,9 +6,11 @@ import VoteButton from '../../components/VoteButton';
 
 interface CommentItemProps {
   comment: Comment;
+  initialUserVoteId?: number | null;
+  disableSelfFetch?: boolean;
 }
 
-const CommentItem = memo(function CommentItem({ comment }: CommentItemProps) {
+const CommentItem = memo(function CommentItem({ comment, initialUserVoteId, disableSelfFetch }: CommentItemProps) {
   return (
     <div className="border-l-2 border-gray-200 pl-4 py-2">
       <div className="flex items-center gap-2 text-xs text-gray-600 mb-2">
@@ -20,6 +22,8 @@ const CommentItem = memo(function CommentItem({ comment }: CommentItemProps) {
           targetType="comment"
           targetId={comment.id}
           initialVoteCount={comment.vote_count || 0}
+          initialUserVoteId={initialUserVoteId}
+          disableSelfFetch={disableSelfFetch}
         />
       </div>
       <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{comment.content}</p>

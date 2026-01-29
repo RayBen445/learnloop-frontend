@@ -107,7 +107,12 @@ export default function CommentsSection({ postId, initialComments }: CommentsSec
       ) : (
         <div className="space-y-6 mb-8">
           {comments.map((comment) => (
-            <CommentItem key={comment.id} comment={comment} />
+            <CommentItem
+              key={comment.id}
+              comment={comment}
+              initialUserVoteId={userVotes[comment.id]}
+              disableSelfFetch={true}
+            />
           ))}
         </div>
       )}
