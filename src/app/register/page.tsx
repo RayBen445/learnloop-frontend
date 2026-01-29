@@ -41,7 +41,7 @@ export default function RegisterPage() {
       
       // Auto-login after successful registration
       const loginResponse = await login({ email, password });
-      await authLogin(loginResponse.access_token);
+      await authLogin(loginResponse.access_token, loginResponse.user);
       
       // No manual redirect here - useEffect will handle it once state propagates
     } catch (err) {

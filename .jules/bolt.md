@@ -9,3 +9,7 @@
 ## 2024-05-22 - [State Synchronization Race Conditions]
 **Learning:** Imperative redirection (e.g., `router.push`) immediately after setting global context state can race with React's render cycle, causing the destination page to see stale state. This manifests as "redirect loops" in auth guards.
 **Action:** Use reactive redirection (e.g., `useEffect` watching `user` state) to ensure navigation only occurs *after* the state has propagated.
+
+## 2024-05-22 - [Optimistic Auth Updates]
+**Learning:** Relying solely on background fetches (e.g., `/api/me`) to update auth state can leave the UI in a "logged out" state for too long, causing guards to reject access immediately after login.
+**Action:** Use optimistic updates: pass the available user data (even if partial) from the login response to the state manager immediately to unblock the UI, while fetching the full profile in the background.

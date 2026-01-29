@@ -32,8 +32,8 @@ export default function LoginPage() {
       const response = await login({ email, password });
       console.log('Login successful, token received');
       
-      // Update auth context with the token
-      await authLogin(response.access_token);
+      // Update auth context with the token and optimistic user data
+      await authLogin(response.access_token, response.user);
       console.log('Auth context updated');
       
       // No manual redirect here - useEffect will handle it once state propagates
