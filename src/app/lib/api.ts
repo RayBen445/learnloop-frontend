@@ -154,7 +154,7 @@ export function createExcerpt(content: string, wordLimit: number = 40): string {
 export async function getHomeFeed(page: number = 1, pageSize: number = 10): Promise<FeedResponse> {
   const response = await fetch(
     `${getApiBaseUrl()}/api/feed/home?page=${page}&page_size=${pageSize}`,
-    { cache: 'no-store' }
+    { next: { revalidate: 60 } }
   );
 
   if (!response.ok) {
@@ -175,7 +175,7 @@ export async function getHomeFeed(page: number = 1, pageSize: number = 10): Prom
 export async function getTopicFeed(topicId: string, page: number = 1, pageSize: number = 10): Promise<FeedResponse> {
   const response = await fetch(
     `${getApiBaseUrl()}/api/feed/topic/${topicId}?page=${page}&page_size=${pageSize}`,
-    { cache: 'no-store' }
+    { next: { revalidate: 60 } }
   );
 
   if (!response.ok) {
@@ -196,7 +196,7 @@ export async function getTopicFeed(topicId: string, page: number = 1, pageSize: 
 export async function getPost(postId: string): Promise<PostDetail> {
   const response = await fetch(
     `${getApiBaseUrl()}/api/posts/${postId}`,
-    { cache: 'no-store' }
+    { next: { revalidate: 60 } }
   );
 
   if (!response.ok) {
@@ -406,7 +406,7 @@ export async function getCommentVotes(commentId: number): Promise<VoteStatus> {
 export async function getUser(userId: string): Promise<User> {
   const response = await fetch(
     `${getApiBaseUrl()}/api/users/${userId}`,
-    { cache: 'no-store' }
+    { next: { revalidate: 60 } }
   );
 
   if (!response.ok) {
@@ -419,7 +419,7 @@ export async function getUser(userId: string): Promise<User> {
 export async function getUserPosts(authorId: string, page: number = 1, pageSize: number = 10): Promise<FeedResponse> {
   const response = await fetch(
     `${getApiBaseUrl()}/api/posts/author/${authorId}?page=${page}&page_size=${pageSize}`,
-    { cache: 'no-store' }
+    { next: { revalidate: 60 } }
   );
 
   if (!response.ok) {
