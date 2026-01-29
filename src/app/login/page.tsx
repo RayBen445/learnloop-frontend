@@ -29,6 +29,9 @@ export default function LoginPage() {
       await authLogin(response.access_token);
       console.log('Auth context updated');
       
+      // Small delay to ensure auth state is fully propagated
+      await new Promise(resolve => setTimeout(resolve, 100));
+
       // Redirect to home feed on success using replace to avoid back button issues
       console.log('Redirecting to /home');
       router.replace('/home');

@@ -36,6 +36,9 @@ export default function RegisterPage() {
       const loginResponse = await login({ email, password });
       await authLogin(loginResponse.access_token);
       
+      // Small delay to ensure auth state is fully propagated
+      await new Promise(resolve => setTimeout(resolve, 100));
+
       // Redirect to home feed using replace to avoid back button issues
       router.replace('/home');
     } catch (err) {
