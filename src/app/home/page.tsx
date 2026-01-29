@@ -1,6 +1,7 @@
 import { getHomeFeed } from '../lib/api';
 import PostCard from '../components/PostCard';
 import Pagination from '../components/Pagination';
+import HomeActions from './HomeActions';
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -25,6 +26,9 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   return (
     <div className="min-h-screen bg-dark-bg">
       <div className="max-w-3xl mx-auto px-6 py-12">
+        {/* Home Actions: Create Post and Search */}
+        <HomeActions />
+
         {/* Error State */}
         {error && (
           <div className="border-l-4 border-red-500 bg-red-950 bg-opacity-20 pl-4 py-3 mb-8 rounded">
