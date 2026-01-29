@@ -1,5 +1,5 @@
 import { getUser, getUserPosts } from '../../lib/api';
-import PostCard from '../../components/PostCard';
+import FeedWithVotes from '../../components/FeedWithVotes';
 import Link from 'next/link';
 
 interface PageProps {
@@ -70,11 +70,7 @@ export default async function UserProfilePage({ params, searchParams }: PageProp
             />
 
             {postsData.posts.length > 0 ? (
-              <div className="space-y-8">
-                {postsData.posts.map((post) => (
-                  <PostCard key={post.id} post={post} />
-                ))}
-              </div>
+              <FeedWithVotes posts={postsData.posts} className="space-y-8" />
             ) : (
               <div className="text-center py-12">
                 <p style={{ color: 'var(--color-luxury-gray-600)' }}>

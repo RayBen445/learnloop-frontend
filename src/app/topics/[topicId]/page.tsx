@@ -1,5 +1,5 @@
 import { getTopicFeed } from '../../lib/api';
-import PostCard from '../../components/PostCard';
+import FeedWithVotes from '../../components/FeedWithVotes';
 import Pagination from '../../components/Pagination';
 
 // Force dynamic rendering
@@ -63,11 +63,7 @@ export default async function TopicPage({ params, searchParams }: TopicPageProps
           {/* Posts Feed */}
           {!error && feed && feed.posts.length > 0 && (
             <>
-              <div className="space-y-8">
-                {feed.posts.map((post) => (
-                  <PostCard key={post.id} post={post} />
-                ))}
-              </div>
+              <FeedWithVotes posts={feed.posts} className="space-y-8" />
 
               {/* Pagination */}
               <Pagination 

@@ -7,14 +7,39 @@ interface VoteButtonProps {
   targetType: 'post' | 'comment';
   targetId: number;
   initialVoteCount?: number;
+  initialUserVoteId?: number | null;
+  disableSelfFetch?: boolean;
 }
 
-export default function VoteButton({ targetType, targetId, initialVoteCount = 0 }: VoteButtonProps) {
+export default function VoteButton({
+  targetType,
+  targetId,
+  initialVoteCount = 0,
+  initialUserVoteId,
+  disableSelfFetch
+}: VoteButtonProps) {
   const [voteCount, setVoteCount] = useState(initialVoteCount);
-  const [userVoteId, setUserVoteId] = useState<number | null>(null);
+  const [userVoteId, setUserVoteId] = useState<number | null>(initialUserVoteId ?? null);
   const [loading, setLoading] = useState(false);
 
+  // Update state if props change (needed when parent fetches data asynchronously)
   useEffect(() => {
+    if (initialUserVoteId !== undefined) {
+      setUserVoteId(initialUserVoteId);
+    }
+  }, [initialUserVoteId]);
+
+  useEffect(() => {
+    // Skip if self-fetch is disabled (managed by parent)
+    if (disableSelfFetch) return;
+
+    // Skip if initialUserVoteId is provided (managed by parent)
+    if (initialUserVoteId !== undefined) return;
+
+    // Skip if not authenticated (optimization)
+    const token = localStorage.getItem('learnloop_token');
+    if (!token) return;
+
     // Fetch vote status on mount
     const fetchVoteStatus = async () => {
       try {
@@ -31,7 +56,7 @@ export default function VoteButton({ targetType, targetId, initialVoteCount = 0 
     };
 
     fetchVoteStatus();
-  }, [targetType, targetId, initialVoteCount]);
+  }, [targetType, targetId, initialVoteCount, initialUserVoteId]);
 
   const handleVote = async () => {
     if (loading) return;

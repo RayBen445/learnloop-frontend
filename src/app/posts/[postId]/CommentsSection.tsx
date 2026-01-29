@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
-import { createComment, Comment } from '../../lib/api';
+import { useState, FormEvent, useEffect } from 'react';
+import { createComment, Comment, getCommentVotes } from '../../lib/api';
 import VoteButton from '../../components/VoteButton';
 
 interface CommentsSectionProps {
@@ -11,9 +11,38 @@ interface CommentsSectionProps {
 
 export default function CommentsSection({ postId, initialComments }: CommentsSectionProps) {
   const [comments, setComments] = useState<Comment[]>(initialComments);
+  const [userVotes, setUserVotes] = useState<Record<number, number | null>>({});
   const [content, setContent] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    // Check if user is authenticated
+    const token = localStorage.getItem('learnloop_token');
+    if (!token) return;
+
+    if (initialComments.length === 0) return;
+
+    const fetchVotes = async () => {
+      const promises = initialComments.map(async (comment) => {
+        try {
+          const status = await getCommentVotes(comment.id);
+          return { id: comment.id, userVoteId: status.user_vote_id || null };
+        } catch (error) {
+          return { id: comment.id, userVoteId: null };
+        }
+      });
+
+      const results = await Promise.all(promises);
+      const votesMap: Record<number, number | null> = {};
+      results.forEach(result => {
+        votesMap[result.id] = result.userVoteId;
+      });
+      setUserVotes(votesMap);
+    };
+
+    fetchVotes();
+  }, [initialComments]);
 
   const MIN_CHARS = 20;
   const charCount = content.length;
@@ -39,6 +68,9 @@ export default function CommentsSection({ postId, initialComments }: CommentsSec
       // Add new comment to the list
       setComments([...comments, newComment]);
       
+      // Initialize vote status for new comment (user hasn't voted yet)
+      setUserVotes(prev => ({ ...prev, [newComment.id]: null }));
+
       // Clear the textarea
       setContent('');
     } catch (err) {
@@ -75,6 +107,8 @@ export default function CommentsSection({ postId, initialComments }: CommentsSec
                   targetType="comment" 
                   targetId={comment.id} 
                   initialVoteCount={comment.vote_count || 0}
+                  initialUserVoteId={userVotes[comment.id]}
+                  disableSelfFetch={true}
                 />
               </div>
               <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{comment.content}</p>
