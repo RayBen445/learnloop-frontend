@@ -1,5 +1,5 @@
 import { getHomeFeed } from './lib/api';
-import PostCard from './components/PostCard';
+import FeedWithVotes from './components/FeedWithVotes';
 import Pagination from './components/Pagination';
 import Hero from './components/Hero';
 
@@ -77,11 +77,7 @@ export default async function Home({ searchParams }: HomePageProps) {
           {/* Feed */}
           {!error && feed && feed.posts.length > 0 && (
             <>
-              <div className="space-y-6">
-                {feed.posts.map((post) => (
-                  <PostCard key={post.id} post={post} />
-                ))}
-              </div>
+              <FeedWithVotes posts={feed.posts} className="space-y-6" />
 
               {/* Pagination */}
               <Pagination 

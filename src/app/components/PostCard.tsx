@@ -4,9 +4,11 @@ import VoteButton from './VoteButton';
 
 interface PostCardProps {
   post: Post;
+  initialUserVoteId?: number | null;
+  disableVoteFetch?: boolean;
 }
 
-export default function PostCard({ post }: PostCardProps) {
+export default function PostCard({ post, initialUserVoteId, disableVoteFetch }: PostCardProps) {
   return (
     <article className="border-b border-gray-200 pb-8">
       <Link href={`/posts/${post.id}`} className="block group mb-2">
@@ -34,6 +36,8 @@ export default function PostCard({ post }: PostCardProps) {
           targetType="post" 
           targetId={post.id} 
           initialVoteCount={post.vote_count}
+          initialUserVoteId={initialUserVoteId}
+          disableSelfFetch={disableVoteFetch}
         />
       </div>
       

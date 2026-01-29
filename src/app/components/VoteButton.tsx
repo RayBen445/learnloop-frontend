@@ -1,20 +1,45 @@
 'use client';
 
-import { useState, useEffect, memo } from 'react';
+import { useState, useEffect } from 'react';
 import { createVote, deleteVote, getPostVotes, getCommentVotes } from '../lib/api';
 
 interface VoteButtonProps {
   targetType: 'post' | 'comment';
   targetId: number;
   initialVoteCount?: number;
+  initialUserVoteId?: number | null;
+  disableSelfFetch?: boolean;
 }
 
-function VoteButton({ targetType, targetId, initialVoteCount = 0 }: VoteButtonProps) {
+export default function VoteButton({
+  targetType,
+  targetId,
+  initialVoteCount = 0,
+  initialUserVoteId,
+  disableSelfFetch
+}: VoteButtonProps) {
   const [voteCount, setVoteCount] = useState(initialVoteCount);
-  const [userVoteId, setUserVoteId] = useState<number | null>(null);
+  const [userVoteId, setUserVoteId] = useState<number | null>(initialUserVoteId ?? null);
   const [loading, setLoading] = useState(false);
 
+  // Update state if props change (needed when parent fetches data asynchronously)
   useEffect(() => {
+    if (initialUserVoteId !== undefined) {
+      setUserVoteId(initialUserVoteId);
+    }
+  }, [initialUserVoteId]);
+
+  useEffect(() => {
+    // Skip if self-fetch is disabled (managed by parent)
+    if (disableSelfFetch) return;
+
+    // Skip if initialUserVoteId is provided (managed by parent)
+    if (initialUserVoteId !== undefined) return;
+
+    // Skip if not authenticated (optimization)
+    const token = localStorage.getItem('learnloop_token');
+    if (!token) return;
+
     // Fetch vote status on mount
     const fetchVoteStatus = async () => {
       try {
@@ -31,7 +56,7 @@ function VoteButton({ targetType, targetId, initialVoteCount = 0 }: VoteButtonPr
     };
 
     fetchVoteStatus();
-  }, [targetType, targetId, initialVoteCount]);
+  }, [targetType, targetId, initialVoteCount, initialUserVoteId]);
 
   const handleVote = async () => {
     if (loading) return;
@@ -61,16 +86,10 @@ function VoteButton({ targetType, targetId, initialVoteCount = 0 }: VoteButtonPr
     }
   };
 
-  const actionLabel = userVoteId ? 'Remove vote' : 'Upvote';
-  const ariaLabel = `${actionLabel} ${targetType}. Current count: ${voteCount}`;
-
   return (
     <button
       onClick={handleVote}
       disabled={loading}
-      aria-label={ariaLabel}
-      aria-pressed={!!userVoteId}
-      title={actionLabel}
       className={`flex items-center gap-1 text-xs ${
         userVoteId 
           ? 'text-blue-700' 
@@ -78,7 +97,6 @@ function VoteButton({ targetType, targetId, initialVoteCount = 0 }: VoteButtonPr
       } disabled:opacity-50 disabled:cursor-not-allowed transition-colors`}
     >
       <svg 
-        aria-hidden="true"
         className="w-3 h-3" 
         fill={userVoteId ? "currentColor" : "none"} 
         stroke="currentColor" 
@@ -86,9 +104,7 @@ function VoteButton({ targetType, targetId, initialVoteCount = 0 }: VoteButtonPr
       >
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
       </svg>
-      <span aria-hidden="true">{voteCount}</span>
+      <span>{voteCount}</span>
     </button>
   );
 }
-
-export default memo(VoteButton);
