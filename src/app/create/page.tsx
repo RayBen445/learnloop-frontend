@@ -129,20 +129,36 @@ export default function CreatePostPage() {
               </p>
             </div>
 
-            <div className="flex gap-3 pt-4">
-              <button
-                type="submit"
-                disabled={loading || !user?.email_verified}
-                className="flex-1 py-3.5 px-4 bg-gradient-primary text-white text-sm font-semibold rounded-lg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent-indigo focus:ring-offset-2 focus:ring-offset-dark-surface disabled:opacity-50 disabled:cursor-not-allowed transition-opacity shadow-lg"
-              >
-                {loading ? 'Creating...' : 'Create Post'}
-              </button>
-              <Link
-                href="/"
-                className="py-3.5 px-6 bg-transparent border-2 border-dark-border hover:border-luxury-gray-600 transition-colors text-luxury-gray-300 hover:text-luxury-white rounded-lg font-semibold text-sm text-center"
-              >
-                Cancel
-              </Link>
+            <div className="flex flex-col gap-3 pt-4">
+              <div className="flex gap-3">
+                <button
+                  type="submit"
+                  disabled={loading || !user?.email_verified}
+                  className="flex-1 py-3.5 px-4 bg-gradient-primary text-white text-sm font-semibold rounded-lg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent-indigo focus:ring-offset-2 focus:ring-offset-dark-surface disabled:opacity-50 disabled:cursor-not-allowed transition-opacity shadow-lg"
+                >
+                  {loading ? 'Creating...' : 'Create Post'}
+                </button>
+                <Link
+                  href="/"
+                  className="py-3.5 px-6 bg-transparent border-2 border-dark-border hover:border-luxury-gray-600 transition-colors text-luxury-gray-300 hover:text-luxury-white rounded-lg font-semibold text-sm text-center"
+                >
+                  Cancel
+                </Link>
+              </div>
+
+              {!user?.email_verified && (
+                <div className="flex items-center gap-2 p-3 bg-yellow-900/30 border border-yellow-800/50 rounded-lg text-xs text-yellow-200">
+                  <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  <span>
+                    You must verify your email address before creating a post.
+                    <Link href="/verify" className="underline hover:text-yellow-100 ml-1">
+                      Check status
+                    </Link>
+                  </span>
+                </div>
+              )}
             </div>
           </form>
         </div>

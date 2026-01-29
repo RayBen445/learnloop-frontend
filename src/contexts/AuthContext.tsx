@@ -7,7 +7,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   mounted: boolean;
-  login: (token: string) => Promise<void>;
+  login: (token: string, user?: Partial<User>) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
 }
@@ -54,11 +54,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(false);
   };
 
-  const login = async (token: string) => {
+  const login = async (token: string, userData?: Partial<User>) => {
     setLoading(true);
     if (typeof window !== 'undefined') {
       localStorage.setItem('learnloop_token', token);
     }
+
+    // Optimistically set user if provided to unblock UI immediately
+    if (userData) {
+      setUser(userData as User);
+    }
+
+    // Always fetch full profile to ensure consistency and get missing fields
     await checkAuth();
   };
 
