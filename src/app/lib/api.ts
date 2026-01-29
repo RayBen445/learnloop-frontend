@@ -154,8 +154,7 @@ export function createExcerpt(content: string, wordLimit: number = 40): string {
 export async function getHomeFeed(page: number = 1, pageSize: number = 10): Promise<FeedResponse> {
   const response = await fetch(
     `${getApiBaseUrl()}/api/feed/home?page=${page}&page_size=${pageSize}`,
-    // Cache public feed for 60 seconds (ISR) to reduce backend load
-    { next: { revalidate: 60 } }
+    { cache: 'no-store' }
   );
 
   if (!response.ok) {
@@ -176,8 +175,7 @@ export async function getHomeFeed(page: number = 1, pageSize: number = 10): Prom
 export async function getTopicFeed(topicId: string, page: number = 1, pageSize: number = 10): Promise<FeedResponse> {
   const response = await fetch(
     `${getApiBaseUrl()}/api/feed/topic/${topicId}?page=${page}&page_size=${pageSize}`,
-    // Cache topic feed for 60 seconds (ISR)
-    { next: { revalidate: 60 } }
+    { cache: 'no-store' }
   );
 
   if (!response.ok) {
@@ -198,8 +196,7 @@ export async function getTopicFeed(topicId: string, page: number = 1, pageSize: 
 export async function getPost(postId: string): Promise<PostDetail> {
   const response = await fetch(
     `${getApiBaseUrl()}/api/posts/${postId}`,
-    // Cache post details for 60 seconds (ISR)
-    { next: { revalidate: 60 } }
+    { cache: 'no-store' }
   );
 
   if (!response.ok) {
@@ -409,8 +406,7 @@ export async function getCommentVotes(commentId: number): Promise<VoteStatus> {
 export async function getUser(userId: string): Promise<User> {
   const response = await fetch(
     `${getApiBaseUrl()}/api/users/${userId}`,
-    // Cache user profile for 60 seconds (ISR)
-    { next: { revalidate: 60 } }
+    { cache: 'no-store' }
   );
 
   if (!response.ok) {
@@ -423,8 +419,7 @@ export async function getUser(userId: string): Promise<User> {
 export async function getUserPosts(authorId: string, page: number = 1, pageSize: number = 10): Promise<FeedResponse> {
   const response = await fetch(
     `${getApiBaseUrl()}/api/posts/author/${authorId}?page=${page}&page_size=${pageSize}`,
-    // Cache user posts for 60 seconds (ISR)
-    { next: { revalidate: 60 } }
+    { cache: 'no-store' }
   );
 
   if (!response.ok) {
