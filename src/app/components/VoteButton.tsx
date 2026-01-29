@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { createVote, deleteVote, getPostVotes, getCommentVotes } from '../lib/api';
 
 interface VoteButtonProps {
@@ -9,7 +9,7 @@ interface VoteButtonProps {
   initialVoteCount?: number;
 }
 
-export default function VoteButton({ targetType, targetId, initialVoteCount = 0 }: VoteButtonProps) {
+function VoteButton({ targetType, targetId, initialVoteCount = 0 }: VoteButtonProps) {
   const [voteCount, setVoteCount] = useState(initialVoteCount);
   const [userVoteId, setUserVoteId] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
@@ -83,3 +83,5 @@ export default function VoteButton({ targetType, targetId, initialVoteCount = 0 
     </button>
   );
 }
+
+export default memo(VoteButton);
