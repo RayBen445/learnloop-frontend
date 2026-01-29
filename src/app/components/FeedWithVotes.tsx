@@ -13,6 +13,8 @@ export default function FeedWithVotes({ posts, className }: FeedWithVotesProps) 
   const [userVotes, setUserVotes] = useState<Record<number, number | null>>({});
 
   useEffect(() => {
+    let isMounted = true;
+
     // Check if user is authenticated
     const token = localStorage.getItem('learnloop_token');
     if (!token) return;
@@ -34,18 +36,25 @@ export default function FeedWithVotes({ posts, className }: FeedWithVotesProps) 
       // We use Promise.all because we handled errors in the map function
       const results = await Promise.all(promises);
 
-      // Reduce to a map
-      const votesMap: Record<number, number | null> = {};
-      results.forEach(result => {
-        votesMap[result.id] = result.userVoteId;
-      });
+      // Only update state if component is still mounted
+      if (isMounted) {
+        // Reduce to a map
+        const votesMap: Record<number, number | null> = {};
+        results.forEach(result => {
+          votesMap[result.id] = result.userVoteId;
+        });
 
-      setUserVotes(votesMap);
+        setUserVotes(votesMap);
+      }
     };
 
     if (posts.length > 0) {
       fetchVotes();
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [posts]);
 
   return (

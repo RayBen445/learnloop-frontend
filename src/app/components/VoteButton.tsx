@@ -11,7 +11,7 @@ interface VoteButtonProps {
   disableSelfFetch?: boolean;
 }
 
-function VoteButton({ targetType, targetId, initialVoteCount = 0 }: VoteButtonProps) {
+function VoteButton({ targetType, targetId, initialVoteCount = 0, initialUserVoteId, disableSelfFetch }: VoteButtonProps) {
   const [voteCount, setVoteCount] = useState(initialVoteCount);
   const [userVoteId, setUserVoteId] = useState<number | null>(initialUserVoteId ?? null);
   const [loading, setLoading] = useState(false);
@@ -50,7 +50,7 @@ function VoteButton({ targetType, targetId, initialVoteCount = 0 }: VoteButtonPr
     };
 
     fetchVoteStatus();
-  }, [targetType, targetId, initialVoteCount, initialUserVoteId]);
+  }, [targetType, targetId, initialVoteCount, initialUserVoteId, disableSelfFetch]);
 
   const handleVote = async () => {
     if (loading) return;

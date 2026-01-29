@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
-import { createComment, Comment } from '../../lib/api';
+import { useState, FormEvent, useEffect } from 'react';
+import { createComment, Comment, getCommentVotes } from '../../lib/api';
 import CommentItem from './CommentItem';
 
 interface CommentsSectionProps {
@@ -17,6 +17,8 @@ export default function CommentsSection({ postId, initialComments }: CommentsSec
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
+
     // Check if user is authenticated
     const token = localStorage.getItem('learnloop_token');
     if (!token) return;
@@ -34,14 +36,22 @@ export default function CommentsSection({ postId, initialComments }: CommentsSec
       });
 
       const results = await Promise.all(promises);
-      const votesMap: Record<number, number | null> = {};
-      results.forEach(result => {
-        votesMap[result.id] = result.userVoteId;
-      });
-      setUserVotes(votesMap);
+
+      // Only update state if component is still mounted
+      if (isMounted) {
+        const votesMap: Record<number, number | null> = {};
+        results.forEach(result => {
+          votesMap[result.id] = result.userVoteId;
+        });
+        setUserVotes(votesMap);
+      }
     };
 
     fetchVotes();
+
+    return () => {
+      isMounted = false;
+    };
   }, [initialComments]);
 
   const MIN_CHARS = 20;
