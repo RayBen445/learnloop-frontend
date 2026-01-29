@@ -71,13 +71,20 @@ export default function Navbar() {
 
         {/* Right: Navigation */}
         {user ? (
-          // Logged in: Show Create, Settings, and user dropdown with Logout
+          // Logged in: Show Create, Profile, Settings, and user dropdown with Logout
           <div className="flex items-center gap-6">
             <Link
               href="/create"
               className="text-sm font-medium tracking-tight text-luxury-gray-300 hover:text-luxury-white transition-colors"
             >
               Create
+            </Link>
+            
+            <Link
+              href={`/users/${user.id}`}
+              className="text-sm font-medium tracking-tight text-luxury-gray-300 hover:text-luxury-white transition-colors"
+            >
+              Profile
             </Link>
             
             <Link
@@ -102,16 +109,6 @@ export default function Navbar() {
               {/* Dropdown Menu */}
               {isMenuOpen && (
                 <div className="absolute right-0 mt-2 w-48 border border-dark-border bg-dark-surface-elevated rounded-lg shadow-xl overflow-hidden">
-                  <Link
-                    href={`/users/${user.id}`}
-                    className="block px-4 py-3 text-sm text-luxury-gray-300 hover:text-luxury-white hover:bg-dark-surface transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Profile
-                  </Link>
-                  
-                  <div className="border-t border-dark-border" />
-                  
                   <button
                     onClick={handleLogout}
                     className="block w-full text-left px-4 py-3 text-sm text-luxury-gray-300 hover:text-luxury-white hover:bg-dark-surface transition-colors"

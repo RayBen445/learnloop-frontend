@@ -36,8 +36,11 @@ export default function RegisterPage() {
       const loginResponse = await login({ email, password });
       await authLogin(loginResponse.access_token);
       
-      // Redirect to home feed
-      router.push('/home');
+      // Small delay to ensure auth state is fully propagated
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Redirect to home feed using replace to avoid back button issues
+      router.replace('/home');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed');
     } finally {

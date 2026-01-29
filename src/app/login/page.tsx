@@ -23,11 +23,20 @@ export default function LoginPage() {
 
     try {
       const response = await login({ email, password });
+      console.log('Login successful, token received');
+      
       // Update auth context with the token
       await authLogin(response.access_token);
-      // Redirect to home feed on success
-      router.push('/home');
+      console.log('Auth context updated');
+      
+      // Small delay to ensure auth state is fully propagated
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Redirect to home feed on success using replace to avoid back button issues
+      console.log('Redirecting to /home');
+      router.replace('/home');
     } catch (err) {
+      console.error('Login error:', err);
       if (err instanceof ApiError) {
         setError(err.message);
       } else {

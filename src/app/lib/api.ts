@@ -136,6 +136,11 @@ export interface UpdateUserData {
   bio?: string;
 }
 
+export interface ChangePasswordData {
+  current_password: string;
+  new_password: string;
+}
+
 // Helper function to create excerpt from content
 export function createExcerpt(content: string, wordLimit: number = 40): string {
   const words = content.split(/\s+/);
@@ -488,6 +493,33 @@ export async function updateUser(data: UpdateUserData): Promise<User> {
   if (!response.ok) {
     const error = await response.json().catch(() => ({ detail: 'Failed to update user', code: 'UPDATE_USER_ERROR' }));
     throw new ApiError(error.detail || 'Failed to update user', error.code || 'UPDATE_USER_ERROR');
+  }
+
+  return response.json();
+}
+
+export async function changePassword(data: ChangePasswordData): Promise<{ message: string }> {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('learnloop_token') : null;
+  
+  if (!token) {
+    throw new ApiError('Authentication required. Please login first.', 'NO_TOKEN');
+  }
+
+  const response = await fetch(
+    `${getApiBaseUrl()}/api/me/password`,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ detail: 'Failed to change password', code: 'CHANGE_PASSWORD_ERROR' }));
+    throw new ApiError(error.detail || 'Failed to change password', error.code || 'CHANGE_PASSWORD_ERROR');
   }
 
   return response.json();
