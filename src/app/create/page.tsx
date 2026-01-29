@@ -5,22 +5,23 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createPost } from '../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
+import LoadingState from '../../components/LoadingState';
 
 export default function CreatePostPage() {
   const router = useRouter();
-  const { user, mounted } = useAuth();
+  const { user, mounted, loading: authLoading } = useAuth();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [topicId, setTopicId] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Redirect if not authenticated
+  // Redirect if not authenticated (only after auth has finished loading)
   useEffect(() => {
-    if (mounted && !user) {
+    if (mounted && !authLoading && !user) {
       router.push('/login');
     }
-  }, [mounted, user, router]);
+  }, [mounted, authLoading, user, router]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -42,8 +43,22 @@ export default function CreatePostPage() {
     }
   };
 
-  if (!mounted || !user) {
-    return null;
+  // Show loading state while checking authentication
+  if (!mounted || authLoading) {
+    return (
+      <div className="min-h-screen bg-dark-bg flex items-center justify-center">
+        <LoadingState size="lg" />
+      </div>
+    );
+  }
+
+  // If no user after loading, return null (will redirect via useEffect)
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-dark-bg flex items-center justify-center">
+        <LoadingState size="lg" />
+      </div>
+    );
   }
 
   return (

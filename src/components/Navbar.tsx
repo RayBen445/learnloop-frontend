@@ -60,7 +60,7 @@ export default function Navbar() {
       <nav className="border-b border-dark-border bg-dark-surface backdrop-blur-sm bg-opacity-80 sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Left: Logo */}
-        <Link href="/" className="inline-flex items-center gap-3 transition-opacity hover:opacity-80">
+        <Link href={user ? "/home" : "/"} className="inline-flex items-center gap-3 transition-opacity hover:opacity-80">
           <div className="text-gradient-primary">
             <LogoSymbol size={28} />
           </div>
