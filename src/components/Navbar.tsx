@@ -97,19 +97,38 @@ export default function Navbar() {
             <div className="relative" ref={menuRef}>
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className={`text-sm font-medium tracking-tight px-4 py-2 rounded-lg transition-all ${
+                aria-expanded={isMenuOpen}
+                aria-haspopup="true"
+                aria-controls="user-menu"
+                className={`flex items-center gap-2 text-sm font-medium tracking-tight px-4 py-2 rounded-lg transition-all ${
                   isMenuOpen 
                     ? 'bg-dark-surface-elevated text-luxury-white' 
                     : 'text-luxury-gray-300 hover:text-luxury-white hover:bg-dark-surface-elevated'
                 }`}
               >
-                {user.username}
+                <span>{user.username}</span>
+                <svg
+                  className={`w-4 h-4 transition-transform duration-200 ${isMenuOpen ? 'rotate-180' : ''}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
               </button>
 
               {/* Dropdown Menu */}
               {isMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 border border-dark-border bg-dark-surface-elevated rounded-lg shadow-xl overflow-hidden">
+                <div
+                  id="user-menu"
+                  role="menu"
+                  aria-label="User menu"
+                  aria-orientation="vertical"
+                  className="absolute right-0 mt-2 w-48 border border-dark-border bg-dark-surface-elevated rounded-lg shadow-xl overflow-hidden"
+                >
                   <button
+                    role="menuitem"
                     onClick={handleLogout}
                     className="block w-full text-left px-4 py-3 text-sm text-luxury-gray-300 hover:text-luxury-white hover:bg-dark-surface transition-colors"
                   >
