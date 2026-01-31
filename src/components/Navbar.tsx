@@ -13,17 +13,27 @@ export default function Navbar() {
 
   const router = useRouter();
 
-  // Close menu when clicking outside
+  // Close menu when clicking outside or pressing Escape
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setIsMenuOpen(false);
       }
     }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setIsMenuOpen(false);
+      }
+    }
     
     if (isMenuOpen) {
       document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleKeyDown);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+        document.removeEventListener('keydown', handleKeyDown);
+      };
     }
   }, [isMenuOpen]);
 
@@ -97,21 +107,36 @@ export default function Navbar() {
             <div className="relative" ref={menuRef}>
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className={`text-sm font-medium tracking-tight px-4 py-2 rounded-lg transition-all ${
+                aria-expanded={isMenuOpen}
+                aria-haspopup="true"
+                aria-label="User menu"
+                className={`text-sm font-medium tracking-tight px-4 py-2 rounded-lg transition-all flex items-center gap-2 ${
                   isMenuOpen 
                     ? 'bg-dark-surface-elevated text-luxury-white' 
                     : 'text-luxury-gray-300 hover:text-luxury-white hover:bg-dark-surface-elevated'
                 }`}
               >
-                {user.username}
+                <span>{user.username}</span>
+                <svg
+                  className={`w-4 h-4 transition-transform duration-200 ${isMenuOpen ? 'rotate-180' : ''}`}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
               </button>
 
               {/* Dropdown Menu */}
               {isMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 border border-dark-border bg-dark-surface-elevated rounded-lg shadow-xl overflow-hidden">
+                <div
+                  className="absolute right-0 mt-2 w-48 border border-dark-border bg-dark-surface-elevated rounded-lg shadow-xl overflow-hidden"
+                  role="menu"
+                >
                   <button
                     onClick={handleLogout}
                     className="block w-full text-left px-4 py-3 text-sm text-luxury-gray-300 hover:text-luxury-white hover:bg-dark-surface transition-colors"
+                    role="menuitem"
                   >
                     Logout
                   </button>
