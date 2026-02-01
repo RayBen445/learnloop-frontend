@@ -86,19 +86,27 @@ export default function VoteButton({
     }
   };
 
+  const isVoted = !!userVoteId;
+  const label = `Upvote ${targetType}, ${voteCount} votes`;
+  const tooltip = isVoted ? 'Remove vote' : 'Upvote';
+
   return (
     <button
       onClick={handleVote}
       disabled={loading}
-      className={`flex items-center gap-1 text-xs ${
-        userVoteId 
+      aria-label={label}
+      aria-pressed={isVoted}
+      title={tooltip}
+      className={`flex items-center gap-1 text-xs rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+        isVoted
           ? 'text-blue-700' 
           : 'text-gray-600 hover:text-blue-700'
       } disabled:opacity-50 disabled:cursor-not-allowed transition-colors`}
     >
       <svg 
+        aria-hidden="true"
         className="w-3 h-3" 
-        fill={userVoteId ? "currentColor" : "none"} 
+        fill={isVoted ? "currentColor" : "none"}
         stroke="currentColor" 
         viewBox="0 0 24 24"
       >
