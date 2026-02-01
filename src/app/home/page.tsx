@@ -2,15 +2,15 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { getHomeFeed } from '../lib/api';
-import PostCard from '../components/PostCard';
+import { getHomeFeed, Post } from '../lib/api';
+import FeedWithVotes from '../components/FeedWithVotes';
 import Pagination from '../components/Pagination';
 import HomeActions from './HomeActions';
 import HomeAuthGuard from './HomeAuthGuard';
 import LoadingState from '../../components/LoadingState';
 
 interface Feed {
-  posts: any[];
+  posts: Post[];
   page: number;
   total_pages: number;
 }
@@ -80,11 +80,7 @@ function HomePageContent() {
             {/* Feed */}
             {feed && feed.posts.length > 0 && (
               <>
-                <div className="space-y-6">
-                  {feed.posts.map((post) => (
-                    <PostCard key={post.id} post={post} />
-                  ))}
-                </div>
+                <FeedWithVotes posts={feed.posts} className="space-y-6" />
 
                 {/* Pagination */}
                 <Pagination
