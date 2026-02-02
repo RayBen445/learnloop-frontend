@@ -1,0 +1,3 @@
+## 2026-02-02 - Dynamic ARIA Labels for Toggle Buttons
+**Learning:** For buttons that toggle state (like Upvote) and display a dynamic count, static labels are insufficient. Screen readers need to know both the current action ("Upvote" vs "Remove vote") and the context ("post" vs "comment"), while the visible count might be separate. Relying solely on `aria-pressed` with a static label can be ambiguous if the label doesn't change to reflect the destructive "undo" action.
+**Action:** Construct dynamic `aria-label` strings that combine action, target, and current state/count (e.g., "Remove vote from post. Current count: 5") and ensure visible children are hidden (`aria-hidden="true"`) to prevent duplicate announcements.

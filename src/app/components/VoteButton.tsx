@@ -86,25 +86,33 @@ export default function VoteButton({
     }
   };
 
+  const isVoted = !!userVoteId;
+  const actionLabel = isVoted ? 'Remove vote from' : 'Upvote';
+  const ariaLabel = `${actionLabel} ${targetType}. Current count: ${voteCount}`;
+
   return (
     <button
       onClick={handleVote}
       disabled={loading}
+      aria-label={ariaLabel}
+      aria-pressed={isVoted}
+      title={`${actionLabel} ${targetType}`}
       className={`flex items-center gap-1 text-xs ${
-        userVoteId 
+        isVoted
           ? 'text-blue-700' 
           : 'text-gray-600 hover:text-blue-700'
       } disabled:opacity-50 disabled:cursor-not-allowed transition-colors`}
     >
       <svg 
         className="w-3 h-3" 
-        fill={userVoteId ? "currentColor" : "none"} 
+        fill={isVoted ? "currentColor" : "none"}
         stroke="currentColor" 
         viewBox="0 0 24 24"
+        aria-hidden="true"
       >
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
       </svg>
-      <span>{voteCount}</span>
+      <span aria-hidden="true">{voteCount}</span>
     </button>
   );
 }
