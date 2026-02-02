@@ -1,0 +1,12 @@
+
+> learnloop-temp@0.1.0 dev
+> next dev
+
+▲ Next.js 16.1.5 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.2:3000
+
+✓ Starting...
+✓ Ready in 1057ms
+○ Compiling /home ...
+ GET /home 200 in 5.8s (compile: 5.2s, render: 621ms)
