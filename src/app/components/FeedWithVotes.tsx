@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Post, getPostVotes } from '../lib/api';
+import { votesCache, VOTE_CACHE_TTL, getVoteCacheKey } from '../lib/voteCache';
 import PostCard from './PostCard';
 
 interface FeedWithVotesProps {
@@ -10,7 +11,8 @@ interface FeedWithVotesProps {
 }
 
 export default function FeedWithVotes({ posts, className }: FeedWithVotesProps) {
-  const [userVotes, setUserVotes] = useState<Record<number, number | null>>({});
+  // Store both userVoteId and voteCount to ensure data freshness
+  const [votesData, setVotesData] = useState<Record<number, { userVoteId: number | null; voteCount: number }>>({});
 
   useEffect(() => {
     // Check if user is authenticated
@@ -21,26 +23,40 @@ export default function FeedWithVotes({ posts, className }: FeedWithVotesProps) 
     const fetchVotes = async () => {
       // Create a map of promises
       const promises = posts.map(async (post) => {
+        const cacheKey = getVoteCacheKey(token, post.id);
+        const cached = votesCache.get(cacheKey);
+
+        // Use cache if valid
+        if (cached && (Date.now() - cached.timestamp < VOTE_CACHE_TTL)) {
+          return { id: post.id, status: cached.data };
+        }
+
         try {
           const status = await getPostVotes(post.id);
-          return { id: post.id, userVoteId: status.user_vote_id || null };
+          // Update cache
+          votesCache.set(cacheKey, { timestamp: Date.now(), data: status });
+          return { id: post.id, status };
         } catch (error) {
           // If fetch fails, we assume no vote or handle it silently
-          return { id: post.id, userVoteId: null };
+          return { id: post.id, status: null };
         }
       });
 
       // Wait for all promises to resolve
-      // We use Promise.all because we handled errors in the map function
       const results = await Promise.all(promises);
 
       // Reduce to a map
-      const votesMap: Record<number, number | null> = {};
+      const newVotesData: Record<number, { userVoteId: number | null; voteCount: number }> = {};
       results.forEach(result => {
-        votesMap[result.id] = result.userVoteId;
+        if (result.status) {
+          newVotesData[result.id] = {
+            userVoteId: result.status.user_vote_id || null,
+            voteCount: result.status.vote_count
+          };
+        }
       });
 
-      setUserVotes(votesMap);
+      setVotesData(newVotesData);
     };
 
     if (posts.length > 0) {
@@ -54,7 +70,8 @@ export default function FeedWithVotes({ posts, className }: FeedWithVotesProps) 
         <PostCard
           key={post.id}
           post={post}
-          initialUserVoteId={userVotes[post.id]}
+          initialUserVoteId={votesData[post.id]?.userVoteId}
+          overrideVoteCount={votesData[post.id]?.voteCount}
           disableVoteFetch={true}
         />
       ))}
