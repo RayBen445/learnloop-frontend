@@ -77,6 +77,7 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={loading}
+                autoComplete="email"
                 className="w-full px-4 py-3 bg-dark-surface-elevated border border-dark-border rounded-lg text-sm text-luxury-white placeholder-luxury-gray-600 focus:outline-none focus:ring-2 focus:ring-accent-indigo focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 placeholder="Enter your email"
               />
@@ -94,6 +95,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   disabled={loading}
+                  autoComplete="current-password"
                   className="w-full px-4 py-3 pr-12 bg-dark-surface-elevated border border-dark-border rounded-lg text-sm text-luxury-white placeholder-luxury-gray-600 focus:outline-none focus:ring-2 focus:ring-accent-indigo focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                   placeholder="Enter your password"
                 />
