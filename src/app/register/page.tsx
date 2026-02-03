@@ -77,6 +77,7 @@ export default function RegisterPage() {
                 onChange={(e) => setUsername(e.target.value)}
                 required
                 disabled={loading}
+                autoComplete="username"
                 className="w-full px-4 py-3 bg-dark-surface-elevated border border-dark-border rounded-lg text-sm text-luxury-white placeholder-luxury-gray-600 focus:outline-none focus:ring-2 focus:ring-accent-emerald focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 placeholder="Enter your username"
               />
@@ -93,6 +94,7 @@ export default function RegisterPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={loading}
+                autoComplete="email"
                 className="w-full px-4 py-3 bg-dark-surface-elevated border border-dark-border rounded-lg text-sm text-luxury-white placeholder-luxury-gray-600 focus:outline-none focus:ring-2 focus:ring-accent-emerald focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 placeholder="Enter your email"
               />
@@ -110,6 +112,7 @@ export default function RegisterPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   disabled={loading}
+                  autoComplete="new-password"
                   className="w-full px-4 py-3 pr-12 bg-dark-surface-elevated border border-dark-border rounded-lg text-sm text-luxury-white placeholder-luxury-gray-600 focus:outline-none focus:ring-2 focus:ring-accent-emerald focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                   placeholder="Enter your password"
                 />
