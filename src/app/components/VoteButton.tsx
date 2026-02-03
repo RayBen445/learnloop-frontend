@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { createVote, deleteVote, getPostVotes, getCommentVotes } from '../lib/api';
+import { invalidateVoteCache } from '../lib/voteCache';
 
 interface VoteButtonProps {
   targetType: 'post' | 'comment';
@@ -28,6 +29,10 @@ export default function VoteButton({
       setUserVoteId(initialUserVoteId);
     }
   }, [initialUserVoteId]);
+
+  useEffect(() => {
+    setVoteCount(initialVoteCount);
+  }, [initialVoteCount]);
 
   useEffect(() => {
     // Skip if self-fetch is disabled (managed by parent)
@@ -77,6 +82,14 @@ export default function VoteButton({
         });
         setUserVoteId(vote.id);
         setVoteCount(prev => prev + 1);
+      }
+
+      // Invalidate cache if it's a post vote
+      if (targetType === 'post') {
+        const token = localStorage.getItem('learnloop_token');
+        if (token) {
+          invalidateVoteCache(token, targetId);
+        }
       }
     } catch (error) {
       // Silently handle errors (user not logged in, etc.)
