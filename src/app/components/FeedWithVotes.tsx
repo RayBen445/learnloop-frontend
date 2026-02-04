@@ -10,7 +10,7 @@ interface FeedWithVotesProps {
 }
 
 export default function FeedWithVotes({ posts, className }: FeedWithVotesProps) {
-  const [userVotes, setUserVotes] = useState<Record<number, number | null>>({});
+  const [votesData, setVotesData] = useState<Record<number, { userVoteId: number | null; voteCount: number }>>({});
 
   useEffect(() => {
     // Check if user is authenticated
@@ -23,10 +23,18 @@ export default function FeedWithVotes({ posts, className }: FeedWithVotesProps) 
       const promises = posts.map(async (post) => {
         try {
           const status = await getPostVotes(post.id);
-          return { id: post.id, userVoteId: status.user_vote_id || null };
+          return {
+            id: post.id,
+            userVoteId: status.user_vote_id || null,
+            voteCount: status.vote_count
+          };
         } catch (error) {
           // If fetch fails, we assume no vote or handle it silently
-          return { id: post.id, userVoteId: null };
+          return {
+            id: post.id,
+            userVoteId: null,
+            voteCount: post.vote_count // Fallback to initial count
+          };
         }
       });
 
@@ -35,12 +43,15 @@ export default function FeedWithVotes({ posts, className }: FeedWithVotesProps) 
       const results = await Promise.all(promises);
 
       // Reduce to a map
-      const votesMap: Record<number, number | null> = {};
+      const votesMap: Record<number, { userVoteId: number | null; voteCount: number }> = {};
       results.forEach(result => {
-        votesMap[result.id] = result.userVoteId;
+        votesMap[result.id] = {
+          userVoteId: result.userVoteId,
+          voteCount: result.voteCount
+        };
       });
 
-      setUserVotes(votesMap);
+      setVotesData(votesMap);
     };
 
     if (posts.length > 0) {
@@ -54,7 +65,8 @@ export default function FeedWithVotes({ posts, className }: FeedWithVotesProps) 
         <PostCard
           key={post.id}
           post={post}
-          initialUserVoteId={userVotes[post.id]}
+          initialUserVoteId={votesData[post.id]?.userVoteId}
+          overrideVoteCount={votesData[post.id]?.voteCount}
           disableVoteFetch={true}
         />
       ))}
