@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Post, getPostVotes } from '../lib/api';
+import { Post, getPostVotes, VoteStatus } from '../lib/api';
 import PostCard from './PostCard';
 
 interface FeedWithVotesProps {
@@ -10,7 +10,7 @@ interface FeedWithVotesProps {
 }
 
 export default function FeedWithVotes({ posts, className }: FeedWithVotesProps) {
-  const [userVotes, setUserVotes] = useState<Record<number, number | null>>({});
+  const [voteData, setVoteData] = useState<Record<number, VoteStatus>>({});
 
   useEffect(() => {
     // Check if user is authenticated
@@ -23,10 +23,10 @@ export default function FeedWithVotes({ posts, className }: FeedWithVotesProps) 
       const promises = posts.map(async (post) => {
         try {
           const status = await getPostVotes(post.id);
-          return { id: post.id, userVoteId: status.user_vote_id || null };
+          return { id: post.id, status };
         } catch (error) {
           // If fetch fails, we assume no vote or handle it silently
-          return { id: post.id, userVoteId: null };
+          return { id: post.id, status: null };
         }
       });
 
@@ -35,12 +35,14 @@ export default function FeedWithVotes({ posts, className }: FeedWithVotesProps) 
       const results = await Promise.all(promises);
 
       // Reduce to a map
-      const votesMap: Record<number, number | null> = {};
+      const votesMap: Record<number, VoteStatus> = {};
       results.forEach(result => {
-        votesMap[result.id] = result.userVoteId;
+        if (result.status) {
+          votesMap[result.id] = result.status;
+        }
       });
 
-      setUserVotes(votesMap);
+      setVoteData(votesMap);
     };
 
     if (posts.length > 0) {
@@ -54,7 +56,8 @@ export default function FeedWithVotes({ posts, className }: FeedWithVotesProps) 
         <PostCard
           key={post.id}
           post={post}
-          initialUserVoteId={userVotes[post.id]}
+          initialUserVoteId={voteData[post.id] ? (voteData[post.id].user_vote_id ?? null) : undefined}
+          overrideVoteCount={voteData[post.id]?.vote_count}
           disableVoteFetch={true}
         />
       ))}
