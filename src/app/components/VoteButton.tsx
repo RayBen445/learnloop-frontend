@@ -86,10 +86,17 @@ export default function VoteButton({
     }
   };
 
+  const label = userVoteId
+    ? `Remove vote. Current count: ${voteCount}`
+    : `Upvote. Current count: ${voteCount}`;
+
   return (
     <button
       onClick={handleVote}
       disabled={loading}
+      aria-label={label}
+      aria-pressed={!!userVoteId}
+      title={userVoteId ? "Remove vote" : "Upvote"}
       className={`flex items-center gap-1 text-xs ${
         userVoteId 
           ? 'text-blue-700' 
