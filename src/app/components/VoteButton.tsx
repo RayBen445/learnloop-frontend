@@ -29,6 +29,11 @@ export default function VoteButton({
     }
   }, [initialUserVoteId]);
 
+  // Sync vote count when parent updates it (e.g. after batch fetch)
+  useEffect(() => {
+    setVoteCount(initialVoteCount);
+  }, [initialVoteCount]);
+
   useEffect(() => {
     // Skip if self-fetch is disabled (managed by parent)
     if (disableSelfFetch) return;

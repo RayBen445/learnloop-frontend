@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { memo } from 'react';
 import { Post } from '../lib/api';
 import VoteButton from './VoteButton';
 
@@ -6,9 +7,15 @@ interface PostCardProps {
   post: Post;
   initialUserVoteId?: number | null;
   disableVoteFetch?: boolean;
+  overrideVoteCount?: number;
 }
 
-export default function PostCard({ post, initialUserVoteId, disableVoteFetch }: PostCardProps) {
+const PostCard = memo(function PostCard({
+  post,
+  initialUserVoteId,
+  disableVoteFetch,
+  overrideVoteCount
+}: PostCardProps) {
   return (
     <article className="border-b border-gray-200 pb-8">
       <Link href={`/posts/${post.id}`} className="block group mb-2">
@@ -35,7 +42,7 @@ export default function PostCard({ post, initialUserVoteId, disableVoteFetch }: 
         <VoteButton 
           targetType="post" 
           targetId={post.id} 
-          initialVoteCount={post.vote_count}
+          initialVoteCount={overrideVoteCount ?? post.vote_count}
           initialUserVoteId={initialUserVoteId}
           disableSelfFetch={disableVoteFetch}
         />
@@ -46,4 +53,6 @@ export default function PostCard({ post, initialUserVoteId, disableVoteFetch }: 
       </p>
     </article>
   );
-}
+});
+
+export default PostCard;
