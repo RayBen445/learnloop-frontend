@@ -86,10 +86,16 @@ export default function VoteButton({
     }
   };
 
+  const ariaLabel = userVoteId
+    ? `Remove vote from ${targetType} (${voteCount} votes)`
+    : `Upvote ${targetType} (${voteCount} votes)`;
+
   return (
     <button
       onClick={handleVote}
       disabled={loading}
+      aria-label={ariaLabel}
+      aria-pressed={!!userVoteId}
       className={`flex items-center gap-1 text-xs ${
         userVoteId 
           ? 'text-blue-700' 
