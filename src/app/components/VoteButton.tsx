@@ -56,31 +56,46 @@ export default function VoteButton({
     };
 
     fetchVoteStatus();
-  }, [targetType, targetId, initialVoteCount, initialUserVoteId]);
+  }, [targetType, targetId, initialVoteCount, initialUserVoteId, disableSelfFetch]);
 
   const handleVote = async () => {
     if (loading) return;
 
     setLoading(true);
 
+    // Store previous state for rollback
+    const previousUserVoteId = userVoteId;
+    const previousVoteCount = voteCount;
+
+    // Optimistic update
     try {
       if (userVoteId) {
-        // Remove vote
-        await deleteVote(userVoteId);
+        // Optimistically remove vote
         setUserVoteId(null);
         setVoteCount(prev => prev - 1);
+
+        // Perform API call
+        await deleteVote(userVoteId);
       } else {
-        // Add vote
+        // Optimistically add vote
+        // Use a temporary ID (-1) to indicate "voted" state before server response
+        setUserVoteId(-1);
+        setVoteCount(prev => prev + 1);
+
+        // Perform API call
         const vote = await createVote({
           target_type: targetType,
           target_id: targetId,
         });
+
+        // Update with real ID from server
         setUserVoteId(vote.id);
-        setVoteCount(prev => prev + 1);
       }
     } catch (error) {
-      // Silently handle errors (user not logged in, etc.)
+      // Revert state on error
       console.error('Vote error:', error);
+      setUserVoteId(previousUserVoteId);
+      setVoteCount(previousVoteCount);
     } finally {
       setLoading(false);
     }
