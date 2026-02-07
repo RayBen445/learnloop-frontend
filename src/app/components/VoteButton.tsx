@@ -90,17 +90,20 @@ export default function VoteButton({
     <button
       onClick={handleVote}
       disabled={loading}
+      aria-label={`Upvote ${targetType}, ${voteCount} ${voteCount === 1 ? 'vote' : 'votes'}`}
+      aria-pressed={!!userVoteId}
       className={`flex items-center gap-1 text-xs ${
         userVoteId 
           ? 'text-blue-700' 
           : 'text-gray-600 hover:text-blue-700'
-      } disabled:opacity-50 disabled:cursor-not-allowed transition-colors`}
+      } disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-sm`}
     >
       <svg 
         className="w-3 h-3" 
         fill={userVoteId ? "currentColor" : "none"} 
         stroke="currentColor" 
         viewBox="0 0 24 24"
+        aria-hidden="true"
       >
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
       </svg>
